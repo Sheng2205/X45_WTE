@@ -150,7 +150,7 @@ export function DishDetailPage() {
     : [];
 
   return (
-    <div className="max-w-5xl lg:max-w-6xl mx-auto space-y-8 pb-16">
+    <div className="space-y-8 pb-16 w-full">
       {/* Back button */}
       <div>
         <button

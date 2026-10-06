@@ -144,7 +144,7 @@ export const DishFormPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-16">
+    <div className="space-y-8 pb-16 max-w-5xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

@@ -42,63 +42,66 @@ export const AppLayout = () => {
       {/* Top Header */}
       <header className="sticky top-0 z-50 border-b border-border/80 bg-background/95 backdrop-blur-md transition-all shadow-xs">
         <div className="mx-auto flex h-16 sm:h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Brand Logo */}
-          <Link to="/" className="group flex items-center gap-3.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-orange-500/25 transition-transform group-hover:scale-105">
-              <span className="font-bold text-xl tracking-tight">W</span>
-            </div>
-            <div>
-              <div className="flex items-center gap-2.5">
-                <span className="font-bold text-2xl tracking-tight text-foreground font-serif">
-                  WhatToEat
-                </span>
-                <span className="rounded-full bg-orange-100 dark:bg-orange-950/60 px-2.5 py-0.5 text-xs font-bold text-orange-700 dark:text-orange-300">
-                  Bếp Nhà
-                </span>
+          {/* Left Group: Brand Logo & Navigation Links */}
+          <div className="flex items-center gap-6 lg:gap-8 xl:gap-10">
+            {/* Brand Logo */}
+            <Link to="/" className="group flex items-center gap-3.5 shrink-0">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-orange-500/25 transition-transform group-hover:scale-105">
+                <span className="font-bold text-xl tracking-tight">W</span>
               </div>
-              <p className="text-xs text-muted-foreground hidden sm:block font-medium">
-                Hôm nay nấu gì từ đồ có sẵn?
-              </p>
-            </div>
-          </Link>
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <span className="font-bold text-2xl tracking-tight text-foreground font-serif">
+                    WhatToEat
+                  </span>
+                  <span className="rounded-full bg-orange-100 dark:bg-orange-950/60 px-2.5 py-0.5 text-xs font-bold text-orange-700 dark:text-orange-300">
+                    Bếp Nhà
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground hidden sm:block font-medium">
+                  Hôm nay nấu gì từ đồ có sẵn?
+                </p>
+              </div>
+            </Link>
 
-          {/* Main Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 p-1.5">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.to;
-              return (
+            {/* Main Navigation Links - Grouped on the Left */}
+            <nav className="hidden md:flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 p-1.5">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.to;
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={cn(
+                      'relative rounded-full px-4 lg:px-5 py-2 text-sm font-semibold transition-all duration-200',
+                      isActive
+                        ? 'bg-card text-primary shadow-xs font-bold'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              {user?.role === 'admin' && (
                 <Link
-                  key={item.to}
-                  to={item.to}
+                  to="/admin/dishes"
                   className={cn(
-                    'relative rounded-full px-5 py-2 text-sm font-medium transition-all duration-200',
-                    isActive
-                      ? 'bg-card text-primary shadow-xs font-bold'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
+                    'rounded-full px-4 py-2 text-sm font-bold transition-colors',
+                    location.pathname.startsWith('/admin')
+                      ? 'bg-orange-600 text-white shadow-xs'
+                      : 'text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-950/50'
                   )}
                 >
-                  {item.label}
+                  Quản Trị Bếp
                 </Link>
-              );
-            })}
-
-            {user?.role === 'admin' && (
-              <Link
-                to="/admin/dishes"
-                className={cn(
-                  'rounded-full px-4 py-2 text-sm font-bold transition-colors',
-                  location.pathname.startsWith('/admin')
-                    ? 'bg-orange-600 text-white shadow-xs'
-                    : 'text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-950/50'
-                )}
-              >
-                Quản Trị Bếp
-              </Link>
-            )}
-          </nav>
+              )}
+            </nav>
+          </div>
 
           {/* Right Action: User & Theme */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <ThemeToggle />
 
             <Link

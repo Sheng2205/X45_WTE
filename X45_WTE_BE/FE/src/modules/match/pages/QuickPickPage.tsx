@@ -72,15 +72,15 @@ export function QuickPickPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-12">
-      {/* Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-2.5">
+      {/* Header - Left-aligned to match the global page margin grid */}
+      <div>
         <span className="text-xs font-bold uppercase tracking-wider text-primary">
           Quyết định nhanh bằng thuật toán trọng số
         </span>
-        <h1 className="text-3xl sm:text-5xl font-bold text-foreground">
+        <h1 className="text-3xl sm:text-5xl font-bold text-foreground mt-1">
           Hôm Nay Ăn Gì? (Chọn Món Nhanh)
         </h1>
-        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed px-2">
+        <p className="text-sm sm:text-base text-muted-foreground mt-1.5 max-w-3xl leading-relaxed">
           Đau đầu vì cả nhà mỗi người một ý? Bếp trưởng WhatToEat sẽ quay ngẫu nhiên một món phù hợp nhất với nguyên liệu trong tủ lạnh của bạn!
         </p>
       </div>
