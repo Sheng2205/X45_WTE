@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Be Vietnam Pro", "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-sans: "Be Vietnam Pro", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
@@ -102,13 +102,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 1.6;
 }
 
 .font-serif {
   font-family: var(--font-serif);
-  letter-spacing: -0.015em;
 }
 
 /* Hide scrollbar for mobile nav */
