@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="vi" data-mau="xam">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wireframe — WhatToEat Bếp Nhà</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind v4 in-browser runtime -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style>
+      :root {
+        --app-font: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        --app-serif: "Playfair Display", Georgia, serif;
+
+        --primary: #ea580c;
+        --primary-hover: #c2410c;
+        --primary-foreground: #ffffff;
+
+        --background: #fbf9f5;
+        --surface: #ffffff;
+        --foreground: #221c17;
+        --muted: #736b63;
+
+        --border: #f0ebe1;
+        --border-strong: #ded6c7;
+
+        --secondary: #f4eee2;
+        --secondary-hover: #eae1d1;
+        --surface-hover: #fcfbfa;
+
+        --ring-focus: rgba(234, 88, 12, 0.15);
+        --border-focus: var(--primary);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--app-font);
+        color: var(--foreground);
+        background: var(--background);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .font-serif { font-family: var(--app-serif); }
+
+      /* ===== SKILL TOOLBAR & REASON BOX (theo chuẩn references/design-process.md) ===== */
+      .wf-bar {
+        position: relative;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        height: 56px;
+        padding: 0 16px;
+        overflow-x: auto;
+        white-space: nowrap;
+        background: #fff;
+        border-bottom: 1px solid #e5e5e5;
+        color: #737373;
+        font: 14px/1 system-ui, -apple-system, sans-serif;
+      }
+      .wf-bar *, .wf-reason * { box-sizing: border-box; }
+      .wf-group { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+      .wf-label { font-size: 13px; color: #737373; }
+      .wf-set { display: flex; align-items: center; gap: 2px; flex-shrink: 0; padding: 3px; border-radius: 10px; background: #f4f4f5; }
+      .wf-set a {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 12px;
+        border-radius: 7px;
+        color: #737373;
+        text-decoration: none;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .wf-set a:hover { color: #171717; }
+      .wf-set a[aria-current="page"] {
+        background: #fff;
+        color: #171717;
+        font-weight: 600;
+        box-shadow: 0 1px 2px rgb(0 0 0 / .08), 0 0 0 1px rgb(0 0 0 / .04);
+      }
+      [data-wf-param="v"] a[data-recommended]::after {
+        content: "";
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #ea580c;
+      }
+
+      .wf-switch { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; color: #737373; text-decoration: none; cursor: pointer; font-size: 13px; }
+      .wf-switch i { position: relative; width: 36px; height: 20px; border-radius: 10px; background: #e4e4e7; transition: background .15s; }
+      .wf-switch i::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px rgb(0 0 0 / .2);
+        transition: translate .15s;
+      }
+      .wf-switch[aria-checked="true"] i { background: #ea580c; }
+      .wf-switch[aria-checked="true"] i::after { translate: 16px 0; }
+
+      [data-wf-param="nhan"] a { padding: 0 8px; }
+      [data-wf-param="nhan"] i { width: 14px; height: 14px; border-radius: 50%; background: currentColor; }
+      [data-wf-param="nhan"] a[data-value="cam"] { color: #ea580c; }
+      [data-wf-param="nhan"] a[data-value="ngoc"] { color: #0d9488; }
+      [data-wf-param="nhan"] a[data-value="cham"] { color: #4f46e5; }
+
+      .wf-menu { flex-shrink: 0; }
+      .wf-menu summary { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px; border-radius: 8px; cursor: pointer; list-style: none; font-size: 13px; }
+      .wf-menu summary::-webkit-details-marker { display: none; }
+      .wf-menu summary:hover, .wf-menu[open] summary { background: #f4f4f5; }
+      .wf-menu b { color: #171717; font-weight: 500; }
+      .wf-popover {
+        position: fixed;
+        z-index: 60;
+        display: grid;
+        min-width: 168px;
+        padding: 4px;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgb(0 0 0 / .08);
+      }
+      .wf-popover a { display: flex; align-items: center; height: 34px; padding: 0 10px; border-radius: 6px; color: #404040; text-decoration: none; font-size: 13px; }
+      .wf-popover a:hover, .wf-popover a[aria-current="page"] { background: #f4f4f5; color: #171717; }
+      .wf-popover a[aria-current="page"] { font-weight: 500; }
+
+      .wf-reason { border-bottom: 1px solid #e5e5e5; background: #fafafa; color: #404040; font: 13px/1.5 system-ui, -apple-system, sans-serif; }
+      .wf-reason summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 44px; padding: 8px 16px; cursor: pointer; list-style: none; }
+      .wf-reason summary::-webkit-details-marker { display: none; }
+      .wf-reason-name { color: #171717; font-weight: 600; }
+      .wf-reason-tag { height: 20px; padding: 0 8px; border-radius: 10px; background: #ffedd5; color: #c2410c; font-size: 11px; font-weight: 600; line-height: 20px; }
+      .wf-reason-why { flex: 1; min-width: 0; color: #525252; }
+      .wf-reason-toggle { display: inline-flex; align-items: center; gap: 4px; height: 28px; margin-left: auto; padding: 0 8px; border-radius: 6px; color: #171717; font-weight: 500; }
+      .wf-reason summary:hover .wf-reason-toggle { background: #f0f0f0; }
+      .wf-reason-body { display: grid; gap: 16px; padding: 4px 16px 16px; }
+      .wf-reason-cols { display: grid; max-width: 1120px; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 16px 32px; }
+      .wf-reason h3 { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; color: #171717; font-size: 12px; font-weight: 600; }
+      .wf-reason h3 i { width: 6px; height: 6px; border-radius: 50%; background: #a3a3a3; }
+      .wf-reason h3 i[data-tone="uu"] { background: #16a34a; }
+      .wf-reason h3 i[data-tone="nhuoc"] { background: #d97706; }
+      .wf-reason ul { margin: 0; padding-left: 16px; display: grid; gap: 4px; }
+      .wf-reason-tips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid #ebebeb; }
+      .wf-reason-tips button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 28px;
+        padding: 0 10px;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        background: #fff;
+        color: #262626;
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .wf-reason-tips button:hover { border-color: #d4d4d4; background: #f5f5f5; }
+      .wf-reason-tips button [data-icon="da-chep"] { display: none; }
+      .wf-reason-tips button[data-copied] [data-icon="chep"] { display: none; }
+      .wf-reason-tips button[data-copied] [data-icon="da-chep"] { display: block; color: #16a34a; }
+
+      /* Block Numbers */
+      [data-wf-block] { position: relative; }
+      [data-wf-block]::before {
+        content: attr(data-wf-block);
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        background: #1f1f1f;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        opacity: 0.85;
+      }
+
+      /* Xám mode vs Màu mode */
+      :root[data-mau="xam"] {
+        --primary: #383838;
+        --primary-hover: #222222;
+        --primary-foreground: #ffffff;
+      }
+      :root:not([data-mau="xam"])[data-nhan="cam"] { --primary: #ea580c; --primary-hover: #c2410c; }
+      :root:not([data-mau="xam"])[data-nhan="ngoc"] { --primary: #0d9488; --primary-hover: #0f766e; }
+      :root:not([data-mau="xam"])[data-nhan="cham"] { --primary: #4f46e5; --primary-hover: #4338ca; }
+    </style>
+  </head>
+
+  <body>
+    <!-- TOOLBAR BẮT BUỘC -->
+    <nav class="wf-bar" aria-label="Wireframe Toolbar">
+      <div class="wf-group">
+        <span class="wf-label">Phương án:</span>
+        <span class="wf-set" data-wf-param="v">
+          <a data-value="a" title="A · Lưới card + bàn bếp trái (khuyên dùng)" data-recommended>A</a>
+          <a data-value="b" title="B · Tủ lạnh trực quan + lưới mở rộng">B</a>
+          <a data-value="c" title="C · Master-Detail (danh sách + công thức)">C</a>
+          <a data-value="d" title="D · A gọn chữ">D</a>
+          <a data-value="e" title="E · Bỏ lặp thông tin">E</a>
+        </span>
+      </div>
+
+      <a class="wf-switch" data-wf-toggle="mau" data-on="mau" data-off="xam" role="switch">
+        Màu <i></i>
+      </a>
+
+      <div class="wf-group">
+        <span class="wf-label">Nhấn:</span>
+        <span class="wf-set" data-wf-param="nhan">
+          <a data-value="cam" aria-label="Cam ấm (ẩm thực)"><i></i></a>
+          <a data-value="ngoc" aria-label="Xanh ngọc (tươi mát)"><i></i></a>
+          <a data-value="cham" aria-label="Chàm (hiện đại)"><i></i></a>
+        </span>
+      </div>
+
+      <div class="wf-group">
+        <span class="wf-set" data-wf-param="kho">
+          <a data-value="desktop">Desktop</a>
+          <a data-value="mobile">Mobile</a>
+        </span>
+      </div>
+
+      <details class="wf-menu">
+        <summary><span>Trạng thái:</span> <b data-wf-current="tt">Có dữ liệu</b> ▾</summary>
+        <div class="wf-popover" data-wf-param="tt">
+          <a data-value="du-lieu">Có dữ liệu</a>
+          <a data-value="dang-tai">Đang tải</a>
+          <a data-value="rong">Rỗng</a>
+          <a data-value="loi">Lỗi</a>
+        </div>
+      </details>
+    </nav>
+
+    <!-- KHUNG LÝ DO (Theo từng phương án) -->
+    <details class="wf-reason" open>
+      <summary>
+        <span class="wf-reason-name" id="reason-title">A · Bàn Bếp Bên Trái + Lưới Card</span>
+        <span class="wf-reason-tag" id="reason-tag">Khuyên dùng</span>
+        <span class="wf-reason-why" id="reason-why">
+          Giữ nguyên liệu và bộ lọc luôn ghim bên trái trong khi duyệt món bên phải, giảm thao tác cuộn qua lại.
+        </span>
+        <span class="wf-reason-toggle"><span>Ưu, nhược</span> ▾</span>
+      </summary>
+      <div class="wf-reason-body">
+        <div class="wf-reason-cols">
+          <section>
+            <h3><i data-tone="uu"></i>Ưu điểm</h3>
+            <ul id="reason-pros">
+              <li>Nguyên liệu trong tủ luôn hiển thị song song với kết quả gợi ý.</li>
+              <li>Bộ lọc khẩu vị và cảnh báo dị ứng tương tác ngay lập tức không che mất kết quả.</li>
+              <li>Dễ mở rộng thêm gợi ý nguyên liệu phụ từ kho catalog.</li>
+            </ul>
+          </section>
+          <section>
+            <h3><i data-tone="nhuoc"></i>Nhược điểm</h3>
+            <ul id="reason-cons">
+              <li>Cột trái chiếm ~35% bề ngang, trên màn hình nhỏ dưới 1024px phải xếp chồng lên đầu trang.</li>
+            </ul>
+          </section>
+          <section>
+            <h3><i></i>Phù hợp khi</h3>
+            <p id="reason-when" class="text-xs text-neutral-600">
+              Người dùng có thói quen vừa mở tủ lạnh kiểm đồ vừa tìm món, cần thử nghiệm bật/tắt nhiều nguyên liệu liên tục.
+            </p>
+          </section>
+        </div>
+        <div class="wf-reason-tips">
+          <h3 class="text-xs font-semibold">Gợi ý phản hồi nhanh:</h3>
+          <button type="button" data-copy="Duyệt phương án A + D">
+            Duyệt phương án A + D
+            <svg data-icon="chep" class="w-3.5 h-3.5 ml-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span data-icon="da-chep" class="text-emerald-600 text-xs font-bold ml-1">✓ Đã chép</span>
+          </button>
+          <button type="button" data-copy="Tăng độ thoáng giữa các thẻ món">
+            Tăng độ thoáng giữa các thẻ món
+            <svg data-icon="chep" class="w-3.5 h-3.5 ml-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span data-icon="da-chep" class="text-emerald-600 text-xs font-bold ml-1">✓ Đã chép</span>
+          </button>
+          <button type="button" data-copy="Bỏ khối 3, đưa thanh dị ứng lên đầu">
+            Bỏ khối 3, đưa thanh dị ứng lên đầu
+            <svg data-icon="chep" class="w-3.5 h-3.5 ml-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span data-icon="da-chep" class="text-emerald-600 text-xs font-bold ml-1">✓ Đã chép</span>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <!-- KHUNG BẢN THIẾT KẾ CHÍNH -->
+    <div id="wf-design">
+      <!-- HEADER KHUNG APP -->
+      <header data-wf-block="1" style="border-bottom: 1px solid var(--border-strong); background: var(--surface); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 36px; height: 36px; border-radius: 12px; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            🍲
+          </div>
+          <div>
+            <div style="font-family: var(--app-serif); font-size: 18px; font-weight: 700; line-height: 1.2;">WhatToEat</div>
+            <div style="font-size: 10px; color: var(--muted);">Bếp Nhà & Gợi Ý Món Ngon</div>
+          </div>
+        </div>
+
+        <nav style="display: flex; gap: 6px;">
+          <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--muted);">Khám Phá</span>
+          <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; background: var(--secondary); color: var(--foreground);">Tìm Theo Tủ Lạnh</span>
+          <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--muted);">Món Bất Ngờ</span>
+          <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--muted);">Thực Đơn Tuần</span>
+          <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--muted);">Món Yêu Thích</span>
+        </nav>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 16px; background: var(--border-strong); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">
+            ST
+          </div>
+        </div>
+      </header>
+
+      <!-- VIEW RENDERER (Rendered by JS based on ?v= and ?tt=) -->
+      <main id="main-content" style="max-width: 1200px; margin: 0 auto; padding: 32px 24px;"></main>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(location.search);
+      const state = {
+        v: params.get("v") || "a",
+        mau: params.get("mau") || "xam",
+        nhan: params.get("nhan") || "cam",
+        kho: params.get("kho") || "desktop",
+        tt: params.get("tt") || "du-lieu"
+      };
+
+      document.documentElement.dataset.mau = state.mau;
+      document.documentElement.dataset.nhan = state.nhan;
+      document.body.dataset.kho = state.kho;
+
+      // Update Toolbar links
+      document.querySelectorAll("[data-wf-param]").forEach(set => {
+        const param = set.dataset.wfParam;
+        set.querySelectorAll("a").forEach(link => {
+          const val = link.dataset.value;
+          link.href = `?${new URLSearchParams({ ...state, [param]: val })}`;
+          if (state[param] === val) link.setAttribute("aria-current", "page");
+        });
+      });
+
+      // Status Menu
+      const currentStatusLabel = document.querySelector('[data-wf-current="tt"]');
+      const statusMap = {
+        "du-lieu": "Có dữ liệu",
+        "dang-tai": "Đang tải",
+        "rong": "Rỗng",
+        "loi": "Lỗi"
+      };
+      if (currentStatusLabel) currentStatusLabel.textContent = statusMap[state.tt] || "Có dữ liệu";
+
+      // Color switch toggle
+      const colorToggle = document.querySelector('[data-wf-toggle="mau"]');
+      if (colorToggle) {
+        const isColor = state.mau === "mau";
+        colorToggle.setAttribute("aria-checked", String(isColor));
+        colorToggle.href = `?${new URLSearchParams({ ...state, mau: isColor ? "xam" : "mau" })}`;
+      }
+
+      // Reason Box Content Map
+      const reasonData = {
+        a: {
+          title: "A · Bàn Bếp Bên Trái + Lưới Card",
+          tag: "Khuyên dùng",
+          why: "Giữ nguyên liệu và bộ lọc luôn ghim bên trái trong khi duyệt món bên phải, giảm thao tác cuộn qua lại.",
+          pros: [
+            "Nguyên liệu trong tủ luôn hiển thị song song với kết quả gợi ý.",
+            "Bộ lọc khẩu vị và cảnh báo dị ứng tương tác ngay lập tức không che mất kết quả.",
+            "Dễ mở rộng thêm gợi ý nguyên liệu phụ từ kho catalog."
+          ],
+          cons: ["Cột trái chiếm ~35% bề ngang, trên màn hình nhỏ phải xếp chồng."],
+          when: "Người dùng có thói quen vừa mở tủ lạnh kiểm đồ vừa tìm món, thử nghiệm bật/tắt nhiều đồ liên tục."
+        },
+        b: {
+          title: "B · Tủ Lạnh Ngăn Kéo Căn Giữa + Lưới Mở Rộng",
+          tag: "Thử nghiệm B",
+          why: "Đặt toàn bộ khay chọn nguyên liệu ở khối trên như một ngăn kéo tủ lạnh, kết quả bên dưới trải rộng 3-4 cột.",
+          pros: [
+            "Lưới kết quả món ăn rộng 100%, nhìn được nhiều món cùng lúc mà không bị bóp nghẽn.",
+            "Rất đẹp khi người dùng thích duyệt lướt nhiều công thức hấp dẫn."
+          ],
+          cons: ["Mỗi khi muốn sửa nguyên liệu phải cuộn ngược lại đỉnh trang."],
+          when: "Người dùng đã biết chắc mình muốn nấu gì, chỉ nhập 1 lần rồi xem danh sách dài để chọn."
+        },
+        c: {
+          title: "C · Master-Detail (Danh sách tóm tắt trái + Chi tiết mở sẵn phải)",
+          tag: "Thử nghiệm C",
+          why: "Cột trái là danh sách món ăn, cột phải là bảng công thức chi tiết tự động cập nhật khi click chọn.",
+          pros: [
+            "Xem được ngay định lượng gia vị và checklist nguyên liệu mà không cần rời trang.",
+            "Tối ưu cho việc ra quyết định nấu ăn ngay tại chỗ."
+          ],
+          cons: ["Không gian hiển thị danh sách bị hẹp, cần màn hình máy tính từ 1280px trở lên."],
+          when: "Người dùng ngồi trước máy tính lập kế hoạch chi tiết, cần soi kỹ công thức từng món."
+        },
+        d: {
+          title: "D · Phương Án A Gọn Chữ",
+          tag: "Biến thể D",
+          why: "Cắt giảm toàn bộ mô tả dài dòng, chỉ giữ Tên món, Thanh % Match Score và số nguyên liệu khớp.",
+          pros: [
+            "Giao diện siêu tinh gọn, mắt quét qua 10 món chỉ mất 3 giây.",
+            "Tránh tình trạng card quá tải chữ khi mô tả quá dài."
+          ],
+          cons: ["Người dùng phải bấm vào trang chi tiết mới đọc được hương vị món."],
+          when: "Người dùng thích giao diện tối giản, chỉ quan tâm đến điểm số và nguyên liệu."
+        },
+        e: {
+          title: "E · Phương Án Bỏ Lặp Thông Tin",
+          tag: "Biến thể E",
+          why: "Loại bỏ hoàn toàn các nhãn lặp lại giữa bộ lọc và thẻ món, gom thanh tìm kiếm vào header.",
+          pros: [
+            "Mỗi thông tin chỉ xuất hiện đúng một chỗ trên màn hình, cấu trúc mạch lạc tuyệt đối."
+          ],
+          cons: ["Thẻ món ăn nhìn đơn giản hơn, ít nhãn màu sắc."],
+          when: "Muốn app sạch sẽ theo chuẩn tối ưu thông tin của design system."
+        }
+      };
+
+      const curReason = reasonData[state.v] || reasonData.a;
+      document.getElementById("reason-title").textContent = curReason.title;
+      document.getElementById("reason-tag").textContent = curReason.tag;
+      document.getElementById("reason-why").textContent = curReason.why;
+      document.getElementById("reason-pros").innerHTML = curReason.pros.map(p => `<li>${p}</li>`).join("");
+      document.getElementById("reason-cons").innerHTML = curReason.cons.map(c => `<li>${c}</li>`).join("");
+      document.getElementById("reason-when").textContent = curReason.when;
+
+      // Copy tip buttons
+      document.querySelectorAll("[data-copy]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          navigator.clipboard.writeText(btn.dataset.copy);
+          btn.setAttribute("data-copied", "");
+          setTimeout(() => btn.removeAttribute("data-copied"), 1500);
+        });
+      });
+
+      // Sample Data
+      const sampleDishes = [
+        { name: "Canh Chua Cá Lóc", score: 92, matchCount: 4, totalCount: 5, meal: "Ăn trưa ☀️", diet: "Mặn 🍖", desc: "Vị chua thanh mát của cà chua và thơm quyện cá lóc đồng." },
+        { name: "Trứng Cuộn Cà Chua", score: 85, matchCount: 3, totalCount: 3, meal: "Ăn sáng 🌅", diet: "Chay 🌱", desc: "Món ăn sáng nhanh gọn, mềm ngậy và giàu protein gia đình." },
+        { name: "Thịt Heo Kho Tộ", score: 78, matchCount: 3, totalCount: 4, meal: "Ăn tối 🌙", diet: "Mặn 🍖", desc: "Món mặn truyền thống đậm đà, hao cơm với tiêu và hành lá." },
+        { name: "Đậu Phụ Sốt Cà Cay", score: 72, matchCount: 2, totalCount: 3, meal: "Ăn tối 🌙", diet: "Eat Clean 🥗", desc: "Đậu phụ mềm thấm đẫm sốt cà chua tươi ít dầu mỡ." }
+      ];
+
+      const mainEl = document.getElementById("main-content");
+
+      // RENDER LOGIC
+      if (state.tt === "dang-tai") {
+        mainEl.innerHTML = `
+          <div style="text-align: center; padding: 60px 0;">
+            <div style="font-size: 32px; animation: spin 1s linear infinite; display: inline-block;">🍲</div>
+            <h3 style="font-family: var(--app-serif); font-size: 20px; font-weight: 700; margin: 16px 0 6px;">Đang tính toán Match Score...</h3>
+            <p style="font-size: 12px; color: var(--muted);">Đang đối chiếu nguyên liệu trong tủ và loại trừ các chất dị ứng</p>
+          </div>
+        `;
+      } else if (state.tt === "rong") {
+        mainEl.innerHTML = `
+          <div style="text-align: center; padding: 60px 0; border: 2px dashed var(--border-strong); border-radius: 24px; background: var(--surface);">
+            <div style="font-size: 40px;">🥗</div>
+            <h3 style="font-family: var(--app-serif); font-size: 22px; font-weight: 700; margin: 16px 0 6px;">Không tìm thấy món ăn nào phù hợp</h3>
+            <p style="font-size: 13px; color: var(--muted); max-width: 420px; margin: 0 auto 16px;">Có thể do nguyên liệu chưa khớp hoặc bị loại bởi tiêu chí dị ứng. Hãy thử chọn thêm nguyên liệu phụ nhé!</p>
+            <button style="background: var(--primary); color: #fff; border: none; border-radius: 20px; padding: 8px 20px; font-size: 12px; font-weight: 600; cursor: pointer;">Đặt lại bộ lọc</button>
+          </div>
+        `;
+      } else if (state.tt === "loi") {
+        mainEl.innerHTML = `
+          <div style="text-align: center; padding: 60px 0; border: 1px solid #fecaca; border-radius: 24px; background: #fef2f2; color: #991b1b;">
+            <div style="font-size: 40px;">⚠️</div>
+            <h3 style="font-size: 20px; font-weight: 700; margin: 16px 0 6px;">Không thể kết nối đến máy chủ</h3>
+            <p style="font-size: 13px; max-width: 380px; margin: 0 auto 16px;">Đã xảy ra sự cố khi tải dữ liệu nguyên liệu. Vui lòng thử lại sau.</p>
+            <button onclick="location.reload()" style="background: #dc2626; color: #fff; border: none; border-radius: 20px; padding: 8px 20px; font-size: 12px; font-weight: 600; cursor: pointer;">Thử tải lại</button>
+          </div>
+        `;
+      } else if (state.v === "b") {
+        // PHƯƠNG ÁN B: Tủ lạnh căn giữa + Lưới mở rộng
+        mainEl.innerHTML = `
+          <div style="display: grid; gap: 28px;">
+            <!-- Khối Tủ Lạnh Khay Trên -->
+            <section data-wf-block="2" style="background: var(--surface); border: 1px solid var(--border-strong); border-radius: 28px; padding: 24px;">
+              <h2 style="font-family: var(--app-serif); font-size: 20px; font-weight: 700; margin: 0 0 12px;">🧺 Ngăn Kéo Tủ Lạnh</h2>
+              <p style="font-size: 12px; color: var(--muted); margin: 0 0 16px;">Chạm vào các nguyên liệu bạn đang có để lọc món:</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+                <span style="background: var(--secondary); border: 1px solid var(--primary); color: var(--foreground); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;">🥚 Trứng gà ✓</span>
+                <span style="background: var(--secondary); border: 1px solid var(--primary); color: var(--foreground); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;">🍅 Cà chua ✓</span>
+                <span style="background: var(--secondary); border: 1px solid var(--primary); color: var(--foreground); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;">🥩 Thịt ba chỉ ✓</span>
+                <span style="border: 1px solid var(--border-strong); padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--muted);">🧅 Hành lá +</span>
+                <span style="border: 1px solid var(--border-strong); padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--muted);">🧈 Đậu phụ +</span>
+                <span style="border: 1px solid var(--border-strong); padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--muted);">🦐 Tôm tươi +</span>
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <input placeholder="Gõ tìm thêm nguyên liệu khác..." style="flex: 1; border: 1px solid var(--border-strong); border-radius: 16px; padding: 10px 16px; font-size: 13px; outline: none;" />
+                <button style="background: var(--primary); color: #fff; border: none; border-radius: 16px; padding: 0 24px; font-size: 13px; font-weight: 600; cursor: pointer;">🔍 Tìm Ngay</button>
+              </div>
+            </section>
+
+            <!-- Lưới Card Mở Rộng 4 Cột -->
+            <section data-wf-block="3">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div style="font-size: 13px; font-weight: 600;">Gợi ý 4 món ăn phù hợp nhất</div>
+                <div style="font-size: 11px; color: var(--muted);">Xếp theo % Match Score giảm dần</div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px;">
+                ${sampleDishes.map(d => `
+                  <div style="background: var(--surface); border: 1px solid var(--border-strong); border-radius: 24px; padding: 18px; display: flex; flex-col; justify-content: space-between;">
+                    <div>
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-size: 11px; background: var(--secondary); padding: 2px 8px; border-radius: 12px;">${d.meal}</span>
+                        <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${d.score}%</span>
+                      </div>
+                      <h4 style="font-family: var(--app-serif); font-size: 16px; font-weight: 700; margin: 0 0 6px;">${d.name}</h4>
+                      <p style="font-size: 11px; color: var(--muted); margin: 0 0 12px; line-height: 1.4;">${d.desc}</p>
+                    </div>
+                    <div style="border-top: 1px solid var(--border); padding-top: 10px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between;">
+                      <span>Đã có ${d.matchCount}/${d.totalCount} đồ</span>
+                      <span style="font-weight: 600; color: var(--foreground);">Xem món →</span>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          </div>
+        `;
+      } else if (state.v === "c") {
+        // PHƯƠNG ÁN C: Master-Detail
+        mainEl.innerHTML = `
+          <div style="display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start;">
+            <!-- Cột Trái: Danh Sách Món -->
+            <div data-wf-block="2" style="background: var(--surface); border: 1px solid var(--border-strong); border-radius: 24px; overflow: hidden;">
+              <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted);">Danh Sách Món Ăn</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">Bấm món để xem công thức ngay</div>
+              </div>
+              <div style="divide-y divide-gray-100;">
+                ${sampleDishes.map((d, idx) => `
+                  <div style="padding: 14px 16px; cursor: pointer; background: ${idx === 0 ? "var(--secondary)" : "transparent"}; border-left: ${idx === 0 ? "3px solid var(--primary)" : "3px solid transparent"};">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span style="font-size: 13px; font-weight: 700;">${d.name}</span>
+                      <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${d.score}%</span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Khớp ${d.matchCount}/${d.totalCount} nguyên liệu • ${d.meal}</div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <!-- Cột Phải: Panel Chi Tiết Công Thức Mở Sẵn -->
+            <div data-wf-block="3" style="background: var(--surface); border: 1px solid var(--border-strong); border-radius: 28px; padding: 28px;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <div>
+                  <span style="background: #dcfce7; color: #166534; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px;">Độ khớp cao: 92%</span>
+                  <h2 style="font-family: var(--app-serif); font-size: 26px; font-weight: 700; margin: 8px 0 4px;">Canh Chua Cá Lóc</h2>
+                  <p style="font-size: 12px; color: var(--muted);">Vị chua thanh mát của cà chua và thơm quyện cá lóc đồng, ăn kèm cơm trắng nóng hổi.</p>
+                </div>
+                <button style="border: 1px solid var(--border-strong); background: #fff; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer;">❤️ Lưu món</button>
+              </div>
+
+              <div style="border-top: 1px solid var(--border); padding-top: 18px; margin-top: 18px;">
+                <h4 style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;">Checklist nguyên liệu cần có:</h4>
+                <div style="display: grid; gap: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: var(--background); padding: 8px 12px; border-radius: 10px; font-size: 12px;">
+                    <span>✓ Cá lóc đồng (đã có sẵn)</span>
+                    <span style="color: var(--muted);">500g</span>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: var(--background); padding: 8px 12px; border-radius: 10px; font-size: 12px;">
+                    <span>✓ Cà chua tươi (đã có sẵn)</span>
+                    <span style="color: var(--muted);">2 quả</span>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: var(--background); padding: 8px 12px; border-radius: 10px; font-size: 12px;">
+                    <span>✓ Hành lá & ớt (đã có sẵn)</span>
+                    <span style="color: var(--muted);">1 bó</span>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px dashed var(--border-strong); padding: 8px 12px; border-radius: 10px; font-size: 12px; color: #b45309;">
+                    <span>○ Bạc hà / Dọc mùng (cần mua thêm)</span>
+                    <span>1 nhánh</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        // PHƯƠNG ÁN A (Khuyên dùng) hoặc D (gọn chữ) hoặc E (bỏ lặp)
+        const isCompact = state.v === "d";
+        mainEl.innerHTML = `
+          <div style="display: grid; grid-template-columns: 360px 1fr; gap: 32px; align-items: start;">
+            <!-- CỘT TRÁI: BÀN BẾP CHỌN NGUYÊN LIỆU & LỌC -->
+            <aside data-wf-block="2" style="background: var(--surface); border: 1px solid var(--border-strong); border-radius: 28px; padding: 24px; display: grid; gap: 20px;">
+              <div>
+                <h3 style="font-family: var(--app-serif); font-size: 18px; font-weight: 700; margin: 0 0 4px;">🧺 Bàn Bếp Tủ Lạnh</h3>
+                <p style="font-size: 11px; color: var(--muted); margin: 0;">Chọn nguyên liệu bạn đang có sẵn</p>
+              </div>
+
+              <!-- Input chọn nguyên liệu -->
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px;">
+                  <span>ĐÃ CHỌN (3 NGUYÊN LIỆU)</span>
+                  <span style="color: var(--primary); cursor: pointer;">Xóa hết</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px solid var(--border-strong); border-radius: 16px; background: var(--background); min-height: 44px;">
+                  <span style="background: var(--secondary); border: 1px solid var(--border-strong); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 14px;">🥚 Trứng gà ✕</span>
+                  <span style="background: var(--secondary); border: 1px solid var(--border-strong); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 14px;">🍅 Cà chua ✕</span>
+                  <span style="background: var(--secondary); border: 1px solid var(--border-strong); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 14px;">🥩 Thịt ba chỉ ✕</span>
+                </div>
+                <input placeholder="Gõ thêm nguyên liệu khác..." style="width: 100%; border: 1px solid var(--border-strong); border-radius: 14px; padding: 8px 12px; font-size: 12px; margin-top: 8px; outline: none;" />
+              </div>
+
+              <!-- Tiêu chí khẩu vị -->
+              <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Loại bữa ăn</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <span style="background: var(--primary); color: #fff; padding: 4px 10px; border-radius: 16px; font-size: 11px; font-weight: 600;">Tất cả bữa</span>
+                  <span style="border: 1px solid var(--border-strong); padding: 4px 10px; border-radius: 16px; font-size: 11px; color: var(--muted);">Ăn sáng 🌅</span>
+                  <span style="border: 1px solid var(--border-strong); padding: 4px 10px; border-radius: 16px; font-size: 11px; color: var(--muted);">Ăn trưa ☀️</span>
+                  <span style="border: 1px solid var(--border-strong); padding: 4px 10px; border-radius: 16px; font-size: 11px; color: var(--muted);">Ăn tối 🌙</span>
+                </div>
+              </div>
+
+              <!-- Tránh dị ứng -->
+              <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                <div style="font-size: 11px; font-weight: 700; color: #dc2626; margin-bottom: 4px;">⚠️ Tránh dị ứng (Loại trừ tuyệt đối)</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <span style="border: 1px solid #fecaca; background: #fef2f2; color: #b91c1c; padding: 4px 10px; border-radius: 16px; font-size: 11px;">Hải sản 🦐</span>
+                  <span style="border: 1px solid var(--border-strong); padding: 4px 10px; border-radius: 16px; font-size: 11px; color: var(--muted);">Đậu phộng 🥜</span>
+                </div>
+              </div>
+
+              <button style="width: 100%; background: var(--primary); color: #fff; border: none; border-radius: 18px; padding: 12px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 4px;">
+                🔍 Tính Điểm & Tìm Món
+              </button>
+            </aside>
+
+            <!-- CỘT PHẢI: LƯỚI CARD KẾT QUẢ -->
+            <section data-wf-block="3">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div style="font-size: 13px; color: var(--muted);">Tìm thấy <strong>4 món ăn</strong> phù hợp nhất</div>
+                <div style="font-size: 11px; color: var(--muted); font-style: italic;">Xếp theo Match Score giảm dần</div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;">
+                ${sampleDishes.map(d => `
+                  <div style="background: var(--surface); border: 1px solid var(--border-strong); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 11px; background: var(--secondary); padding: 2px 10px; border-radius: 12px; font-weight: 500;">${d.meal}</span>
+                        <span style="font-size: 12px; font-weight: 700; color: var(--primary); background: #fff7ed; padding: 2px 8px; border-radius: 10px; border: 1px solid #ffedd5;">${d.score}% Hợp</span>
+                      </div>
+                      <h4 style="font-family: var(--app-serif); font-size: 18px; font-weight: 700; margin: 0 0 6px;">${d.name}</h4>
+                      ${!isCompact ? `<p style="font-size: 12px; color: var(--muted); margin: 0 0 12px; line-height: 1.4;">${d.desc}</p>` : ""}
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 8px;">
+                      <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px;">
+                        <span>Có sẵn <strong>${d.matchCount}/${d.totalCount}</strong> nguyên liệu</span>
+                        <span>${d.score}%</span>
+                      </div>
+                      <div style="height: 6px; width: 100%; background: var(--border); border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; width: ${d.score}%; background: var(--primary); border-radius: 4px;"></div>
+                      </div>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          </div>
+        `;
+      }
+    </script>
+  </body>
+</html>
