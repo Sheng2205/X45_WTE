@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Search, Plus, X, Sparkles, AlertCircle } from 'lucide-react';
 import { dishService } from '@/services/dishService';
 import { matchApi } from '@/modules/match/api/match.api';
@@ -46,11 +46,13 @@ const ALLERGENS = [
 ];
 
 export const FridgePage: React.FC = () => {
-  const [ingredients, setIngredients] = useState<string[]>([
-    'Trứng gà',
-    'Cà chua',
-    'Hành lá',
-  ]);
+  const location = useLocation();
+  const presetNames = location.state?.presetIngredientNames as string[] | undefined;
+
+  const [ingredients, setIngredients] = useState<string[]>(() => {
+    if (presetNames && presetNames.length > 0) return presetNames;
+    return ['Trứng gà', 'Cà chua', 'Hành lá'];
+  });
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState<Ingredient[]>([]);
   const [selectedMealType, setSelectedMealType] = useState('all');
@@ -60,6 +62,12 @@ export const FridgePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (presetNames && presetNames.length > 0) {
+      setIngredients(presetNames);
+    }
+  }, [presetNames]);
 
   // Autocomplete fetch as user types
   useEffect(() => {

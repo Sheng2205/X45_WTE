@@ -38,11 +38,11 @@ export const AppLayout = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="font-extrabold text-surface-text dark:text-foreground text-sm">
-              WhatToEat (WTE)
+              WhatToEat - Bếp Nhà
             </span>
-            <span>• Bếp Nhà Thông Minh</span>
+            <span>• Nấu ngon mỗi ngày từ nguyên liệu sẵn có</span>
           </div>
-          <p>© 2026 WhatToEat. Tối ưu tủ lạnh, ăn ngon tròn vị gia đình.</p>
+          <p>© 2026 WhatToEat - Bếp Nhà. Tối ưu tủ lạnh, ăn ngon tròn vị gia đình.</p>
         </div>
       </footer>
     </div>

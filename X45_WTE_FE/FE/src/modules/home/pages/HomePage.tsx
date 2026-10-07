@@ -41,7 +41,7 @@ export const HomePage = () => {
   };
 
   const handleStartMatching = () => {
-    navigate('/match', { state: { presetIngredientNames: quickSelected } });
+    navigate('/kham-pha', { state: { presetIngredientNames: quickSelected } });
   };
 
   return (
@@ -68,7 +68,7 @@ export const HomePage = () => {
                 asChild
                 className="rounded-full bg-primary hover:bg-primary/90 text-white px-7 py-3 text-sm font-bold shadow-md shadow-orange-600/20 h-12"
               >
-                <Link to="/match">Bắt đầu tìm món →</Link>
+                <Link to="/kham-pha">Bắt đầu tìm món →</Link>
               </Button>
               <Button
                 variant="outline"
@@ -170,7 +170,7 @@ export const HomePage = () => {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Card 1: Match */}
-          <Link to="/match" className="group block focus:outline-none">
+          <Link to="/kham-pha" className="group block focus:outline-none">
             <Card className="h-full overflow-hidden rounded-3xl border border-border/80 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-xl hover:shadow-orange-500/5">
               <div className="aspect-[16/10] w-full overflow-hidden bg-muted min-h-[220px]">
                 <img
@@ -230,7 +230,7 @@ export const HomePage = () => {
           </Link>
 
           {/* Card 3: Weekly Plan */}
-          <Link to="/weekly-plan" className="group block focus:outline-none">
+          <Link to="/thuc-don-tuan" className="group block focus:outline-none">
             <Card className="h-full overflow-hidden rounded-3xl border border-border/80 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-xl hover:shadow-orange-500/5">
               <div className="aspect-[16/10] w-full overflow-hidden bg-muted min-h-[220px]">
                 <img
@@ -279,7 +279,7 @@ export const HomePage = () => {
           </div>
         </div>
         <Button variant="outline" asChild className="rounded-full text-sm font-semibold border-border/80 hover:bg-muted shrink-0 h-11 px-6">
-          <Link to="/favorites">Xem danh sách đã lưu →</Link>
+          <Link to="/yeu-thich">Xem danh sách đã lưu →</Link>
         </Button>
       </section>
     </div>

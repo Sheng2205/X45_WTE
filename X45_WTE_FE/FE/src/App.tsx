@@ -29,10 +29,15 @@ function App() {
       <Route path="/logout" element={<LogoutPage />} />
 
       <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        {/* Core Routes according to ANTIGRAVITY_FRONTEND_SPEC */}
-        <Route path="/" element={<FridgePage />} />
+        {/* Initial Introduction Page */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/gioi-thieu" element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
+
+        {/* Core Fridge, Match, and Search Routes */}
         <Route path="/kham-pha" element={<FridgePage />} />
         <Route path="/match" element={<FridgePage />} />
+        <Route path="/tu-lanh" element={<FridgePage />} />
         <Route path="/ket-qua" element={<SearchResultsPage />} />
         <Route path="/quick-pick" element={<QuickPickPage />} />
         <Route path="/thuc-don-tuan" element={<WeeklyPlanPage />} />
@@ -44,7 +49,6 @@ function App() {
         <Route path="/dishes/:id" element={<DishDetailPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/me" element={<Navigate to="/profile" replace />} />
-        <Route path="/home" element={<HomePage />} />
 
         {/* Kitchen Management (Admin) */}
         <Route path="/admin/ingredients" element={<IngredientsPage />} />

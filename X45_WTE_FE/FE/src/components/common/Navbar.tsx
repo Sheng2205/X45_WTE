@@ -13,7 +13,8 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
   const location = useLocation();
 
   const navItems = [
-    { name: 'Tủ Lạnh', path: '/kham-pha', alias: ['/', '/match'] },
+    { name: 'Giới Thiệu', path: '/', alias: ['/gioi-thieu', '/home'] },
+    { name: 'Tủ Lạnh', path: '/kham-pha', alias: ['/match', '/tu-lanh'] },
     { name: 'Gợi Ý Món', path: '/ket-qua', alias: [] },
     { name: 'Chọn Nhanh', path: '/quick-pick', alias: [] },
     { name: 'Thực Đơn Tuần', path: '/thuc-don-tuan', alias: ['/weekly-plan'] },
@@ -29,24 +30,27 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border-b border-surface-border">
+    <header className="sticky top-0 z-50 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border-b border-surface-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
-        {/* Brand Logo */}
+        {/* Brand Logo: WhatToEat - Bếp Nhà */}
         <Link to="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group">
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
             <UtensilsCrossed size={22} />
           </div>
           <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-xl tracking-tight text-surface-text dark:text-foreground">
-                WTE
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="font-extrabold text-xl sm:text-2xl tracking-tight text-surface-text dark:text-foreground">
+                WhatToEat
               </span>
-              <span className="text-[10px] font-semibold bg-primary-light text-primary dark:bg-orange-950/60 dark:text-orange-300 px-1.5 py-0.5 rounded-full uppercase">
-                Beta
+              <span className="text-surface-muted dark:text-neutral-500 font-normal text-sm sm:text-base hidden xs:inline">
+                -
+              </span>
+              <span className="text-[11px] sm:text-xs font-bold bg-primary-light text-primary dark:bg-orange-950/60 dark:text-orange-300 px-2.5 py-0.5 rounded-full">
+                Bếp Nhà
               </span>
             </div>
-            <span className="text-xs text-surface-muted -mt-1 font-medium hidden xs:inline">
-              Bếp Nhà Thông Minh
+            <span className="text-[11px] text-surface-muted -mt-0.5 font-medium hidden sm:inline">
+              Hôm nay nấu gì từ đồ có sẵn?
             </span>
           </div>
         </Link>
@@ -101,7 +105,14 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             }
             title="Món yêu thích"
           >
-            <Heart size={20} className={location.pathname === '/yeu-thich' || location.pathname === '/favorites' ? 'fill-current text-red-500' : ''} />
+            <Heart
+              size={20}
+              className={
+                location.pathname === '/yeu-thich' || location.pathname === '/favorites'
+                  ? 'fill-current text-red-500'
+                  : ''
+              }
+            />
           </NavLink>
 
           <div className="flex items-center gap-2 sm:gap-2.5 pl-2 border-l border-surface-border">
