@@ -8,12 +8,32 @@
   --radius-md: 0.75rem;
   --radius-lg: 1.1rem;
   --radius-xl: 1.5rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+
+  --color-primary: #ea580c;
+  --color-primary-hover: #c2410c;
+  --color-primary-light: #ffedd5;
+  --color-primary-subtle: #fff7ed;
+
+  --color-surface: #faf8ff;
+  --color-surface-card: #ffffff;
+  --color-surface-dim: #f2f3ff;
+  --color-surface-border: #e2e8f0;
+  --color-surface-text: #0f172a;
+  --color-surface-muted: #64748b;
+
+  --color-match-high: #16a34a;
+  --color-match-medium: #d97706;
+  --color-match-badge: #dcfce7;
+
+  --shadow-card: 0 2px 12px -2px rgba(0, 0, 0, 0.05), 0 1px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 10px 25px -5px rgba(234, 88, 12, 0.15);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);

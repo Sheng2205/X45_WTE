@@ -51,14 +51,18 @@ export const calculateMatchScore = (
   mealType?: string,
   dietTags?: string[]
 ): ScoredDish => {
-  const userIngredientSet = new Set(userIngredientIds);
+  const userIngredientSet = new Set(
+    userIngredientIds.map((item) => String(item).toLowerCase().trim())
+  );
 
   // Ingredient ratio
   const dishIngredients = dish.ingredients || [];
   const totalIngredients = dishIngredients.length;
-  const matchedIngredients = dishIngredients.filter((ing) =>
-    userIngredientSet.has(String(ing.ingredientId))
-  ).length;
+  const matchedIngredients = dishIngredients.filter((ing) => {
+    const idMatch = ing.ingredientId && userIngredientSet.has(String(ing.ingredientId).toLowerCase());
+    const nameMatch = ing.name && userIngredientSet.has(ing.name.toLowerCase().trim());
+    return Boolean(idMatch || nameMatch);
+  }).length;
 
   const ingredientRatio = totalIngredients > 0 ? matchedIngredients / totalIngredients : 0;
 

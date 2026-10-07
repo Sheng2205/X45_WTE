@@ -21,10 +21,10 @@ export function QuickPickPage() {
   const rouletteRef = useRef<HTMLDivElement>(null);
 
   const handlePick = async () => {
-    if (selectedIngredients.length === 0) {
-      toast.error('Vui lòng chọn ít nhất 1 nguyên liệu có sẵn');
-      return;
-    }
+    const effectiveIngredients =
+      selectedIngredients.length > 0
+        ? selectedIngredients
+        : ['Trứng gà', 'Cà chua', 'Thịt bò', 'Thịt ba chỉ', 'Hành lá'];
 
     setLoading(true);
     setPickedDish(null);
@@ -39,7 +39,7 @@ export function QuickPickPage() {
 
     try {
       const res = await matchApi.quickPick({
-        ingredients: selectedIngredients,
+        ingredients: effectiveIngredients,
         mealType: mealType || undefined,
         dietTags: dietTags.length ? dietTags : undefined,
         allergens: allergens.length ? allergens : undefined,

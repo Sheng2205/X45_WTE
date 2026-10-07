@@ -8,7 +8,8 @@ import { ForgotPasswordPage } from '@/modules/auth/pages/ForgotPasswordPage';
 import { LogoutPage } from '@/modules/auth/pages/LogoutPage';
 import { HomePage } from '@/modules/home/pages/HomePage';
 import { ProfilePage } from '@/modules/profile/pages/ProfilePage';
-import { MatchPage } from '@/modules/match/pages/MatchPage';
+import { FridgePage } from '@/pages/FridgePage';
+import { SearchResultsPage } from '@/pages/SearchResultsPage';
 import { QuickPickPage } from '@/modules/match/pages/QuickPickPage';
 import { WeeklyPlanPage } from '@/modules/match/pages/WeeklyPlanPage';
 import { DishDetailPage } from '@/modules/match/pages/DishDetailPage';
@@ -28,14 +29,24 @@ function App() {
       <Route path="/logout" element={<LogoutPage />} />
 
       <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        <Route path="/" element={<HomePage />} />
+        {/* Core Routes according to ANTIGRAVITY_FRONTEND_SPEC */}
+        <Route path="/" element={<FridgePage />} />
+        <Route path="/kham-pha" element={<FridgePage />} />
+        <Route path="/match" element={<FridgePage />} />
+        <Route path="/ket-qua" element={<SearchResultsPage />} />
+        <Route path="/quick-pick" element={<QuickPickPage />} />
+        <Route path="/thuc-don-tuan" element={<WeeklyPlanPage />} />
+        <Route path="/weekly-plan" element={<WeeklyPlanPage />} />
+        <Route path="/yeu-thich" element={<FavoritesPage />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
+
+        {/* Detail and Profile */}
+        <Route path="/dishes/:id" element={<DishDetailPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/me" element={<Navigate to="/profile" replace />} />
-        <Route path="/match" element={<MatchPage />} />
-        <Route path="/quick-pick" element={<QuickPickPage />} />
-        <Route path="/weekly-plan" element={<WeeklyPlanPage />} />
-        <Route path="/dishes/:id" element={<DishDetailPage />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path="/home" element={<HomePage />} />
+
+        {/* Kitchen Management (Admin) */}
         <Route path="/admin/ingredients" element={<IngredientsPage />} />
         <Route path="/admin/dishes" element={<DishesPage />} />
         <Route path="/admin/dishes/new" element={<DishFormPage />} />
