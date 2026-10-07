@@ -129,7 +129,7 @@ export function DishDetailPage() {
   if (!dish) {
     return (
       <div className="max-w-md mx-auto text-center py-20 space-y-4">
-        <h2 className="font-serif text-2xl font-bold text-foreground">
+        <h2 className="text-2xl font-bold text-foreground">
           Món ăn không tồn tại hoặc đã bị xóa
         </h2>
         <Button onClick={() => navigate('/match')} className="rounded-full">

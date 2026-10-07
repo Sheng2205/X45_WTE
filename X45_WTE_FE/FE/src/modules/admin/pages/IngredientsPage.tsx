@@ -80,7 +80,7 @@ export const IngredientsPage = () => {
           <span className="text-xs font-bold uppercase tracking-wider text-primary">
             Khu Vực Quản Trị
           </span>
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground mt-1">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-surface-text dark:text-foreground mt-1 tracking-tight">
             Danh Mục Nguyên Liệu Chuẩn Hóa
           </h1>
         </div>

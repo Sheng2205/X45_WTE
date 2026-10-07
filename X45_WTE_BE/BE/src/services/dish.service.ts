@@ -5,14 +5,27 @@ import { createDishSchema, updateDishSchema } from '../validators/dish.validator
 export type CreateDishInput = z.infer<typeof createDishSchema>;
 export type UpdateDishInput = z.infer<typeof updateDishSchema>;
 
-export const getAllDishes = async (query: { page?: number; limit?: number }) => {
+export const getAllDishes = async (query: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  mealType?: string;
+}) => {
   const page = query.page || 1;
   const limit = query.limit || 20;
   const skip = (page - 1) * limit;
 
+  const filter: Record<string, any> = { isDeleted: false };
+  if (query.search && query.search.trim()) {
+    filter.name = { $regex: query.search.trim(), $options: 'i' };
+  }
+  if (query.mealType && query.mealType.trim()) {
+    filter.mealType = query.mealType.trim();
+  }
+
   const [dishes, total] = await Promise.all([
-    DishModel.find({ isDeleted: false }).skip(skip).limit(limit).sort({ createdAt: -1 }),
-    DishModel.countDocuments({ isDeleted: false })
+    DishModel.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
+    DishModel.countDocuments(filter)
   ]);
 
   return { dishes, total };

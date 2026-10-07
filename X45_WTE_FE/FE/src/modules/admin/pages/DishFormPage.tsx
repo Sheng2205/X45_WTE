@@ -155,7 +155,7 @@ export const DishFormPage = () => {
           >
             ← Quay lại danh mục món
           </button>
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-surface-text dark:text-foreground tracking-tight">
             {isEdit ? 'Chỉnh Sửa Món Ăn' : 'Thêm Món Ăn Mới'}
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">

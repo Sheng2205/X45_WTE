@@ -26,8 +26,8 @@ dishRouter.post('/weekly-plan', authGuard, validateBody(weeklyPlanSchema), weekl
 dishRouter.post('/sync-themealdb', authGuard, requireRole('admin'), syncTheMealDb);
 dishRouter.get('/themealdb/search', authGuard, searchTheMealDbHandler);
 
-// CRUD routes (Admin)
-dishRouter.get('/', authGuard, requireRole('admin'), getAll);
+// CRUD routes (Admin / User read)
+dishRouter.get('/', authGuard, getAll);
 dishRouter.get('/:id', authGuard, getById);
 dishRouter.post('/', authGuard, requireRole('admin'), validateBody(createDishSchema), create);
 dishRouter.put('/:id', authGuard, requireRole('admin'), validateBody(updateDishSchema), update);

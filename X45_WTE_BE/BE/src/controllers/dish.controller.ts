@@ -11,7 +11,9 @@ import type { CreateDishInput, UpdateDishInput } from '../services/dish.service'
 export const getAll = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
-  const result = await getAllDishes({ page, limit });
+  const search = req.query.search as string | undefined;
+  const mealType = req.query.mealType as string | undefined;
+  const result = await getAllDishes({ page, limit, search, mealType });
   return res.json(result);
 };
 

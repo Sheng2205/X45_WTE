@@ -60,7 +60,7 @@ export const ProfilePage = () => {
     <div className="space-y-6">
       <div>
         <span className="text-[11px] font-bold uppercase tracking-wider text-primary">Tài khoản cá nhân</span>
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mt-1">Hồ Sơ Cá Nhân</h1>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground mt-1 tracking-tight">Hồ Sơ Cá Nhân</h1>
         <p className="text-sm text-muted-foreground mt-2">Quản lý thông tin cá nhân của bạn.</p>
       </div>
 
@@ -90,7 +90,7 @@ export const ProfilePage = () => {
         {/* Right column — edit form */}
         <Card className="lg:col-span-2 rounded-3xl shadow-sm border-border/50">
           <CardHeader>
-            <CardTitle className="font-serif text-2xl text-foreground">Chỉnh Sửa Thông Tin</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl font-bold text-foreground">Chỉnh Sửa Thông Tin</CardTitle>
           </CardHeader>
           <CardContent>
             {user ? (
