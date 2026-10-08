@@ -101,6 +101,9 @@ export const matchApi = {
 
   submitReview: (dishId: string, data: { isRecommended: boolean; comment?: string }) =>
     http.post<{ success: boolean; review: DishReview }>(`/reviews/${dishId}`, data),
+
+  deleteReview: (reviewId: string) =>
+    http.delete<{ success: boolean }>(`/reviews/${reviewId}`),
 };
 
 export interface DishReview {

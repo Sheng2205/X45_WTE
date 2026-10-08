@@ -49,3 +49,22 @@ export const upsertDishReview = async (req: Request, res: Response) => {
 
   return res.json({ success: true, review });
 };
+
+export const deleteReview = async (req: Request, res: Response) => {
+  const reviewId = req.params.reviewId as string;
+  const review = await ReviewModel.findById(reviewId);
+
+  if (!review) {
+    return res.status(404).json({ message: 'Không tìm thấy đánh giá' });
+  }
+
+  const isAuthor = String(review.userId) === String(req.user?.sub);
+  const isAdmin = req.user?.role === 'admin';
+
+  if (!isAuthor && !isAdmin) {
+    return res.status(403).json({ message: 'Bạn không có quyền xóa đánh giá này' });
+  }
+
+  await ReviewModel.findByIdAndDelete(reviewId);
+  return res.json({ success: true, message: 'Đã xóa đánh giá thành công' });
+};
