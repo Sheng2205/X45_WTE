@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, PlaySquare, ExternalLink, ChefHat, Globe, ThumbsUp, ThumbsDown, MessageSquare, Send, Loader2, Trash2 } from 'lucide-react';
+import { Heart, PlaySquare, ExternalLink, ChefHat, Globe, ThumbsUp, ThumbsDown, MessageSquare, Send, Loader2, Trash2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { toast } from 'sonner';
@@ -10,6 +10,14 @@ import { favoritesApi } from '@/modules/favorites/api/favorites.api';
 import { authApi } from '@/modules/auth/api/auth.api';
 import type { CurrentUser } from '@/modules/auth/types/auth.types';
 import { getDishImageUrl } from '@/shared/lib/dishImages';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/shared/components/ui/dialog';
 
 const MEAL_LABELS: Record<string, string> = {
   an_sang: 'Bữa sáng',
@@ -140,19 +148,33 @@ export function DishDetailPage() {
     }
   };
 
-  const handleDeleteReview = async (reviewId: string) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa đánh giá này không?')) return;
+  const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deletingReview, setDeletingReview] = useState(false);
+
+  const promptDeleteReview = (reviewId: string) => {
+    setReviewToDelete(reviewId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteReview = async () => {
+    if (!reviewToDelete) return;
+    setDeletingReview(true);
     try {
-      await matchApi.deleteReview(reviewId);
+      await matchApi.deleteReview(reviewToDelete);
       toast.success('Đã xóa đánh giá thành công');
       if (id) loadReviews(id);
-      if (reviewsData?.userReview?._id === reviewId) {
+      if (reviewsData?.userReview?._id === reviewToDelete) {
         setMyVote(true);
         setMyComment('');
         setShowReviewForm(false);
       }
+      setIsDeleteDialogOpen(false);
+      setReviewToDelete(null);
     } catch {
       toast.error('Không thể xóa đánh giá. Vui lòng thử lại.');
+    } finally {
+      setDeletingReview(false);
     }
   };
 
@@ -540,7 +562,7 @@ export function DishDetailPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => handleDeleteReview(reviewsData.userReview!._id)}
+                  onClick={() => promptDeleteReview(reviewsData.userReview!._id)}
                   className="rounded-xl text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 border-red-200 dark:border-red-900 cursor-pointer"
                 >
                   <Trash2 className="size-3.5 mr-1" />
@@ -616,7 +638,7 @@ export function DishDetailPage() {
                       (currentUser?._id && String(rev.userId) === String(currentUser._id))) && (
                       <button
                         type="button"
-                        onClick={() => handleDeleteReview(rev._id)}
+                        onClick={() => promptDeleteReview(rev._id)}
                         className="p-1.5 text-muted-foreground hover:text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
                         title={
                           currentUser?.role === 'admin' && String(rev.userId) !== String(currentUser?._id)
@@ -669,6 +691,53 @@ export function DishDetailPage() {
           <Link to="/weekly-plan">Lên thực đơn tuần với món này →</Link>
         </Button>
       </div>
+
+      {/* In-Screen Delete Confirmation Modal */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="max-w-md rounded-3xl p-6 sm:p-7 border border-border/80 bg-card shadow-2xl">
+          <DialogHeader className="flex flex-row items-center gap-3.5 space-y-0 text-left mb-2">
+            <div className="h-12 w-12 rounded-2xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+              <AlertTriangle className="size-6" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-bold text-foreground">
+                Xác Nhận Xóa Đánh Giá
+              </DialogTitle>
+              <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
+                Gỡ bỏ nhận xét và điểm đề xuất này khỏi món ăn.
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+
+          <p className="text-sm text-foreground/80 leading-relaxed bg-muted/40 p-3.5 rounded-2xl border border-border/60">
+            Bạn có chắc chắn muốn xóa đánh giá này? Sau khi xóa, bạn hoặc người dùng vẫn có thể gửi đánh giá mới bất kỳ lúc nào.
+          </p>
+
+          <DialogFooter className="flex flex-row items-center justify-end gap-2.5 pt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setReviewToDelete(null);
+              }}
+              disabled={deletingReview}
+              className="rounded-xl px-5 text-xs font-semibold cursor-pointer"
+            >
+              Hủy bỏ
+            </Button>
+            <Button
+              type="button"
+              onClick={confirmDeleteReview}
+              disabled={deletingReview}
+              className="rounded-xl bg-red-600 hover:bg-red-700 text-white px-5 text-xs font-bold gap-1.5 shadow-md shadow-red-600/20 cursor-pointer"
+            >
+              {deletingReview && <Loader2 className="size-3.5 animate-spin" />}
+              Xác nhận xóa
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
