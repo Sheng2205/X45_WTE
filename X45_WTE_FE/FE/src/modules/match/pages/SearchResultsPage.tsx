@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, SlidersHorizontal, Sparkles } from 'lucide-react';
-import { DishCard } from '@/components/dishes/DishCard';
+import { DishCard } from '../components/DishCard';
 import { favoritesApi } from '@/modules/favorites/api/favorites.api';
-import { dishService } from '@/services/dishService';
+import { matchApi } from '../api/match.api';
 import { toast } from 'sonner';
-import type { ScoredDish } from '@/modules/match/api/match.api';
+import type { ScoredDish } from '../api/match.api';
 
 export const SearchResultsPage: React.FC = () => {
   const location = useLocation();
@@ -22,9 +22,13 @@ export const SearchResultsPage: React.FC = () => {
   useEffect(() => {
     favoritesApi.getAll()
       .then((res) => {
-        const ids = (res.data as any[]).map(
-          (f) => f.dish?._id || f.dishId?._id || f.dishId
-        );
+        const items = res.data as Array<{ dish?: { _id: string }; dishId?: string | { _id: string } }>;
+        const ids = items.map((f) => {
+          if (f.dish?._id) return f.dish._id;
+          if (typeof f.dishId === 'string') return f.dishId;
+          if (f.dishId?._id) return f.dishId._id;
+          return '';
+        });
         setFavoriteIds(ids.filter(Boolean));
       })
       .catch(() => {});
@@ -33,8 +37,7 @@ export const SearchResultsPage: React.FC = () => {
   // If user navigated directly to /ket-qua without state, fetch with default pantry
   useEffect(() => {
     if (!stateResults) {
-      setLoading(true);
-      dishService.getMatchDishes({
+      matchApi.getMatchDishes({
         ingredients: ['Trứng gà', 'Cà chua', 'Thịt bò'],
       })
         .then((res) => setResults(res.results || []))

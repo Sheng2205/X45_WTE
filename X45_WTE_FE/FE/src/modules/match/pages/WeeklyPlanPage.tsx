@@ -15,7 +15,6 @@ import {
   ChevronRight,
   RotateCcw,
 } from 'lucide-react';
-import { dishService } from '@/services/dishService';
 import { favoritesApi } from '@/modules/favorites/api/favorites.api';
 import { getDishImageUrl } from '@/shared/lib/dishImages';
 import {
@@ -25,7 +24,7 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { toast } from 'sonner';
-import type { ScoredDish, Dish } from '../api/match.api';
+import { dishService, type ScoredDish, type Dish } from '../api/match.api';
 
 const DAYS_OF_WEEK = [
   'Thứ Hai',

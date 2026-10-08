@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { authApi } from '@/modules/auth/api/auth.api';
 import { tokenStore } from '@/modules/auth/store/token.store';
-import { Navbar } from '@/components/common/Navbar';
+import { Navbar } from './Navbar';
 import type { CurrentUser } from '@/modules/auth/types/auth.types';
 
 export const AppLayout = () => {

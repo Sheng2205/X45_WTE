@@ -23,7 +23,7 @@ export const add = async (req: Request, res: Response) => {
 };
 
 export const remove = async (req: Request, res: Response) => {
-  const favorite = await removeFavorite(req.user!.sub, req.params.dishId);
+  const favorite = await removeFavorite(req.user!.sub, req.params.dishId as string);
   if (!favorite) return res.status(404).json({ message: 'Không tìm thấy món trong danh sách yêu thích' });
   return res.json({ success: true });
 };

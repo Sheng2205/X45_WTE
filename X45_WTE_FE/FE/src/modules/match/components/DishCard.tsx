@@ -5,7 +5,7 @@ import type { Dish } from '@/modules/match/api/match.api';
 import { getDishImageUrl } from '@/shared/lib/dishImages';
 
 export interface DishCardProps {
-  dish: Dish | any;
+  dish: Dish;
   matchScore?: number;
   isFavorite?: boolean;
   onToggleFavorite?: (dishId: string) => void;

@@ -25,6 +25,7 @@ export interface Dish {
   dietTags: string[];
   allergens: string[];
   ingredients: { ingredientId: string; name: string; quantity?: string }[];
+  cookTime?: number;
 }
 
 export interface ScoredDish {
@@ -40,10 +41,60 @@ export interface Ingredient {
 }
 
 export const matchApi = {
-  searchIngredients: (search: string) => http.get<Ingredient[]>(`/ingredients?search=${encodeURIComponent(search)}`),
-  getAllIngredients: () => http.get<Ingredient[]>('/ingredients'),
-  match: (data: MatchRequest) => http.post<{ results: ScoredDish[] }>('/dishes/match', data),
-  quickPick: (data: MatchRequest) => http.post<ScoredDish>('/dishes/quick-pick', data),
-  weeklyPlan: (data: WeeklyPlanRequest) => http.post<{ plan: { day: number; dish: ScoredDish['dish']; matchScore: number }[]; hasRepeat: boolean }>('/dishes/weekly-plan', data),
-  getDish: (id: string) => http.get<Dish>(`/dishes/${id}`),
+  searchIngredients: (search: string) =>
+    http.get<Ingredient[]>(`/ingredients?search=${encodeURIComponent(search)}`),
+
+  getAllIngredients: () =>
+    http.get<Ingredient[]>('/ingredients'),
+
+  match: (data: MatchRequest) =>
+    http.post<{ results: ScoredDish[] }>('/dishes/match', data),
+
+  getMatchDishes: async (payload: MatchRequest) => {
+    const res = await http.post<{ results: ScoredDish[] }>('/dishes/match', payload);
+    return res.data;
+  },
+
+  quickPick: (data: MatchRequest) =>
+    http.post<ScoredDish>('/dishes/quick-pick', data),
+
+  getQuickPick: async (payload: MatchRequest) => {
+    const res = await http.post<ScoredDish>('/dishes/quick-pick', payload);
+    return res.data;
+  },
+
+  weeklyPlan: (data: WeeklyPlanRequest) =>
+    http.post<{ plan: { day: number; dish: ScoredDish['dish']; matchScore: number }[]; hasRepeat: boolean }>(
+      '/dishes/weekly-plan',
+      data
+    ),
+
+  getWeeklyPlan: async (payload: WeeklyPlanRequest = { days: 7, ingredients: [] }) => {
+    const res = await http.post<{ plan: { day: number; dish: ScoredDish['dish']; matchScore: number }[]; hasRepeat: boolean }>(
+      '/dishes/weekly-plan',
+      payload
+    );
+    return res.data;
+  },
+
+  getDishes: async (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    mealType?: string;
+  }) => {
+    const query = new URLSearchParams();
+    if (params?.page) query.append('page', String(params.page));
+    if (params?.limit) query.append('limit', String(params.limit));
+    if (params?.search) query.append('search', params.search);
+    if (params?.mealType) query.append('mealType', params.mealType);
+    const qs = query.toString();
+    const res = await http.get<{ dishes: Dish[]; total: number }>(`/dishes${qs ? `?${qs}` : ''}`);
+    return res.data;
+  },
+
+  getDish: (id: string) =>
+    http.get<Dish>(`/dishes/${id}`),
 };
+
+export const dishService = matchApi;

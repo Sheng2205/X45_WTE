@@ -12,9 +12,8 @@ import {
   ChevronRight,
   AlertCircle,
 } from 'lucide-react';
-import { dishService } from '@/services/dishService';
 import { favoritesApi } from '@/modules/favorites/api/favorites.api';
-import { matchApi } from '@/modules/match/api/match.api';
+import { matchApi, dishService } from '../api/match.api';
 import { getDishImageUrl } from '@/shared/lib/dishImages';
 import { toast } from 'sonner';
 import type { Ingredient, ScoredDish } from '../api/match.api';

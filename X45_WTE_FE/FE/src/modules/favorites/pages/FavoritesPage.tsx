@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { favoritesApi } from '../api/favorites.api';
-import { DishCard } from '@/components/dishes/DishCard';
+import { DishCard } from '@/modules/match/components/DishCard';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { Heart, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';

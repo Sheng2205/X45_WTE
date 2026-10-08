@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Search, Plus, X, Sparkles, AlertCircle } from 'lucide-react';
-import { dishService } from '@/services/dishService';
-import { matchApi } from '@/modules/match/api/match.api';
-import type { Ingredient } from '@/modules/match/api/match.api';
+import { matchApi } from '../api/match.api';
+import type { Ingredient } from '../api/match.api';
 
 const POPULAR_SUGGESTIONS = [
   'Trứng gà',
@@ -125,16 +124,16 @@ export const FridgePage: React.FC = () => {
         dietTags: selectedDiets.length > 0 ? selectedDiets : undefined,
         allergens: selectedAllergens.length > 0 ? selectedAllergens : undefined,
       };
-      const res = await dishService.getMatchDishes(payload);
+      const res = await matchApi.getMatchDishes(payload);
       navigate('/ket-qua', {
         state: { results: res.results, filterPayload: payload },
       });
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          err.response?.data?.error?.message ||
-          'Có lỗi khi tìm món ăn.'
-      );
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string; error?: { message?: string } } } })?.response?.data?.message ||
+        (err as { response?: { data?: { message?: string; error?: { message?: string } } } })?.response?.data?.error?.message ||
+        'Có lỗi khi tìm món ăn.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

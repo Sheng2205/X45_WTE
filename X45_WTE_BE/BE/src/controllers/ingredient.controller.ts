@@ -20,7 +20,7 @@ export const create = async (req: Request, res: Response) => {
 };
 
 export const update = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { name } = req.body as { name: string };
   const ingredient = await updateIngredient(id, name);
   if (!ingredient) return res.status(404).json({ message: 'Không tìm thấy nguyên liệu hoặc tên bị trùng lặp' });
@@ -28,7 +28,7 @@ export const update = async (req: Request, res: Response) => {
 };
 
 export const remove = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const ingredient = await deleteIngredient(id);
   if (!ingredient) return res.status(404).json({ message: 'Không tìm thấy nguyên liệu' });
   return res.json({ success: true });

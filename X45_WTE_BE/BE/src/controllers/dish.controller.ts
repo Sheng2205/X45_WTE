@@ -18,7 +18,7 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getById = async (req: Request, res: Response) => {
-  const dish = await getDishById(req.params.id);
+  const dish = await getDishById(req.params.id as string);
   if (!dish) return res.status(404).json({ message: 'Không tìm thấy món ăn' });
   return res.json(dish);
 };
@@ -31,13 +31,13 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   const data = req.body as UpdateDishInput;
-  const dish = await updateDish(req.params.id, data);
+  const dish = await updateDish(req.params.id as string, data);
   if (!dish) return res.status(404).json({ message: 'Không tìm thấy món ăn' });
   return res.json(dish);
 };
 
 export const remove = async (req: Request, res: Response) => {
-  const dish = await softDeleteDish(req.params.id);
+  const dish = await softDeleteDish(req.params.id as string);
   if (!dish) return res.status(404).json({ message: 'Không tìm thấy món ăn' });
   return res.json({ success: true });
 };
