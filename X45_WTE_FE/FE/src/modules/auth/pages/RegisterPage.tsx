@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { KeyRound, Loader2, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { authApi } from '../api/auth.api';
@@ -115,6 +115,13 @@ export const RegisterPage = () => {
           {loading && <Loader2 className="size-4 animate-spin" />}
           Đăng Ký & Gửi Mã OTP
         </Button>
+
+        <p className="text-center text-xs text-muted-foreground pt-1">
+          Đã có tài khoản?{' '}
+          <Link to="/login" className="font-semibold text-primary hover:underline">
+            Đăng nhập ngay
+          </Link>
+        </p>
       </form>
     </div>
   );

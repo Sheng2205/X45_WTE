@@ -37,8 +37,17 @@ export const login = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'Please verify your email first using register OTP' });
   }
 
-  await issueOtpForUser(String(user._id));
-  return res.status(202).json({ message: 'OTP has been sent to your email', requiresOtp: true, email: user.email });
+  const token = signToken({ sub: String(user._id), email: user.email, role: user.role });
+  return res.json({
+    token,
+    user: {
+      _id: user._id,
+      email: user.email,
+      role: user.role,
+      displayName: user.displayName,
+      avatarUrl: user.avatarUrl
+    }
+  });
 };
 
 export const verifyLoginOtp = async (req: Request, res: Response) => {

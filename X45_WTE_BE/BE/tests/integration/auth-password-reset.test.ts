@@ -71,7 +71,8 @@ describe('POST /api/auth/reset-password', () => {
 
     const login = await request(app).post('/api/auth/login').send({ email, password: newPassword });
 
-    expect(login.status).toBe(202);
+    expect(login.status).toBe(200);
+    expect(login.body).toHaveProperty('token');
   });
 
   it('cannot reuse a reset token', async () => {
