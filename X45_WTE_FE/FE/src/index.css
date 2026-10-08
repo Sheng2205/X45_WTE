@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
@@ -11,21 +13,21 @@
   --radius-2xl: 1.25rem;
   --radius-3xl: 1.75rem;
 
-  --color-primary: #ea580c;
-  --color-primary-hover: #c2410c;
-  --color-primary-light: #ffedd5;
-  --color-primary-subtle: #fff7ed;
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-primary-subtle: var(--primary-subtle);
 
-  --color-surface: #faf8ff;
-  --color-surface-card: #ffffff;
-  --color-surface-dim: #f2f3ff;
-  --color-surface-border: #e2e8f0;
-  --color-surface-text: #0f172a;
-  --color-surface-muted: #64748b;
+  --color-surface: var(--surface);
+  --color-surface-card: var(--surface-card);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-border: var(--surface-border);
+  --color-surface-text: var(--surface-text);
+  --color-surface-muted: var(--surface-muted);
 
   --color-match-high: #16a34a;
   --color-match-medium: #d97706;
-  --color-match-badge: #dcfce7;
+  --color-match-badge: var(--match-badge);
 
   --shadow-card: 0 2px 12px -2px rgba(0, 0, 0, 0.05), 0 1px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-float: 0 10px 25px -5px rgba(234, 88, 12, 0.15);
@@ -62,6 +64,9 @@
   --card: hsl(0 0% 100%);
   --card-foreground: hsl(24 25% 15%);
   --primary: hsl(18 92% 48%);
+  --primary-hover: hsl(18 90% 40%);
+  --primary-light: hsl(34 100% 92%);
+  --primary-subtle: hsl(36 100% 96%);
   --primary-foreground: hsl(0 0% 100%);
   --muted: hsl(35 25% 92%);
   --muted-foreground: hsl(24 12% 45%);
@@ -81,6 +86,15 @@
   --sidebar-accent: hsl(35 25% 91%);
   --sidebar-accent-foreground: hsl(18 90% 42%);
   --sidebar-border: hsl(32 20% 88%);
+
+  /* Surface tokens for warm culinary theme */
+  --surface: hsl(38 33% 97%);
+  --surface-card: hsl(0 0% 100%);
+  --surface-dim: hsl(35 25% 94%);
+  --surface-border: hsl(32 20% 88%);
+  --surface-text: hsl(24 25% 15%);
+  --surface-muted: hsl(24 12% 45%);
+  --match-badge: hsl(142 76% 92%);
 }
 
 /* Cozy Culinary Theme (Dark) */
@@ -90,6 +104,9 @@
   --card: hsl(24 18% 14%);
   --card-foreground: hsl(38 25% 95%);
   --primary: hsl(20 90% 55%);
+  --primary-hover: hsl(20 90% 60%);
+  --primary-light: hsl(24 45% 20%);
+  --primary-subtle: hsl(24 30% 16%);
   --primary-foreground: hsl(0 0% 100%);
   --muted: hsl(24 15% 18%);
   --muted-foreground: hsl(30 12% 65%);
@@ -109,6 +126,15 @@
   --sidebar-accent: hsl(24 18% 18%);
   --sidebar-accent-foreground: hsl(20 90% 65%);
   --sidebar-border: hsl(24 15% 20%);
+
+  /* Surface tokens adapted for cozy dark theme */
+  --surface: hsl(24 20% 10%);
+  --surface-card: hsl(24 18% 14%);
+  --surface-dim: hsl(24 16% 18%);
+  --surface-border: hsl(24 15% 22%);
+  --surface-text: hsl(38 25% 95%);
+  --surface-muted: hsl(30 12% 65%);
+  --match-badge: hsl(142 50% 18%);
 }
 
 * {
