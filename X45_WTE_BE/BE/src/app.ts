@@ -8,6 +8,7 @@ import { dishRouter } from './routes/dish.route';
 import { favoriteRouter } from './routes/favorite.route';
 import { ingredientRouter } from './routes/ingredient.route';
 import { profileRouter } from './routes/profile.route';
+import { reviewRouter } from './routes/review.route';
 
 export const app = express();
 
@@ -25,5 +26,6 @@ app.use('/api/profile', profileRouter);
 app.use('/api/ingredients', ingredientRouter);
 app.use('/api/dishes', dishRouter);
 app.use('/api/favorites', favoriteRouter);
+app.use('/api/reviews', reviewRouter);
 app.use(errorMiddleware);
 

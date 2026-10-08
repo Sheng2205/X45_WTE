@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, PlaySquare, ExternalLink, ChefHat, Globe } from 'lucide-react';
+import { Heart, PlaySquare, ExternalLink, ChefHat, Globe, ThumbsUp, ThumbsDown, MessageSquare, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { toast } from 'sonner';
 import { matchApi } from '../api/match.api';
-import type { Dish } from '../api/match.api';
+import type { Dish, DishReviewsResponse } from '../api/match.api';
 import { favoritesApi } from '@/modules/favorites/api/favorites.api';
 import { getDishImageUrl } from '@/shared/lib/dishImages';
 
@@ -72,6 +72,23 @@ export function DishDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
   const [checkedIngredients, setCheckedIngredients] = useState<string[]>([]);
+  const [reviewsData, setReviewsData] = useState<DishReviewsResponse | null>(null);
+  const [myVote, setMyVote] = useState<boolean>(true);
+  const [myComment, setMyComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
+  const loadReviews = (dishId: string) => {
+    matchApi.getReviews(dishId)
+      .then((res) => {
+        setReviewsData(res.data);
+        if (res.data?.userReview) {
+          setMyVote(res.data.userReview.isRecommended);
+          setMyComment(res.data.userReview.comment || '');
+        }
+      })
+      .catch(() => {});
+  };
 
   useEffect(() => {
     if (id) {
@@ -80,6 +97,8 @@ export function DishDetailPage() {
         .then((res) => setDish(res.data))
         .catch(() => toast.error('Không tìm thấy thông tin món ăn'))
         .finally(() => setLoading(false));
+
+      loadReviews(id);
 
       favoritesApi.getAll()
         .then((res) => {
@@ -91,6 +110,25 @@ export function DishDetailPage() {
         .catch(() => {});
     }
   }, [id]);
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dish) return;
+    setSubmittingReview(true);
+    try {
+      await matchApi.submitReview(dish._id, {
+        isRecommended: myVote,
+        comment: myComment.trim(),
+      });
+      toast.success('Cảm ơn bạn đã để lại đánh giá!');
+      loadReviews(dish._id);
+      setShowReviewForm(false);
+    } catch {
+      toast.error('Không thể gửi đánh giá. Vui lòng thử lại.');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const toggleFavorite = async () => {
     if (!dish) return;
@@ -382,6 +420,185 @@ export function DishDetailPage() {
           </a>
         </div>
       )}
+
+      {/* Community Reviews & Recommendation Section */}
+      <div className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 lg:p-10 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-6">
+          <div className="flex items-center gap-3.5">
+            <div className="h-11 w-11 rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-primary flex items-center justify-center">
+              <MessageSquare className="size-6" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+                Đánh Giá & Nhận Xét
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                Cảm nhận và mẹo nấu từ cộng đồng thành viên Bếp Nhà
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-3.5 py-1.5 rounded-full">
+              <ThumbsUp className="size-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                {reviewsData?.total ? `${reviewsData.percentage}% khuyên nên thử` : '100% đánh giá tích cực'}
+              </span>
+              <span className="text-xs text-muted-foreground">({reviewsData?.total ?? 0})</span>
+            </div>
+
+            <Button
+              onClick={() => setShowReviewForm(!showReviewForm)}
+              className="rounded-full bg-primary hover:bg-primary/90 text-white text-xs sm:text-sm font-semibold h-9 px-4 cursor-pointer"
+            >
+              {reviewsData?.userReview ? 'Sửa đánh giá của bạn' : '+ Viết nhận xét'}
+            </Button>
+          </div>
+        </div>
+
+        {/* User Review Form */}
+        {showReviewForm && (
+          <form
+            onSubmit={handleSubmitReview}
+            className="rounded-2xl bg-muted/40 border border-border/80 p-5 sm:p-6 space-y-4 animate-in fade-in duration-200"
+          >
+            <div className="space-y-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Bạn có thích hoặc muốn đề xuất món này không?
+              </span>
+              <div className="flex gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setMyVote(true)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition cursor-pointer ${
+                    myVote
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                      : 'bg-card text-foreground border-border/80 hover:border-emerald-500'
+                  }`}
+                >
+                  <ThumbsUp className="size-4" />
+                  <span>Khuyên nên nấu</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setMyVote(false)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition cursor-pointer ${
+                    !myVote
+                      ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+                      : 'bg-card text-foreground border-border/80 hover:border-rose-500'
+                  }`}
+                >
+                  <ThumbsDown className="size-4" />
+                  <span>Chưa hợp vị</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="review-comment" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Chia sẻ cảm nhận hoặc mẹo nhỏ khi nấu (tùy chọn)
+              </label>
+              <textarea
+                id="review-comment"
+                rows={3}
+                value={myComment}
+                onChange={(e) => setMyComment(e.target.value)}
+                placeholder="Ví dụ: Món này ăn kèm dưa leo rất ngon, nên bớt cay nếu nhà có trẻ nhỏ..."
+                className="w-full rounded-xl border border-border/80 bg-card p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowReviewForm(false)}
+                className="rounded-xl text-xs font-medium cursor-pointer"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                disabled={submittingReview}
+                className="rounded-xl bg-primary text-white hover:bg-primary/90 text-xs font-bold gap-1.5 cursor-pointer"
+              >
+                {submittingReview ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />}
+                {reviewsData?.userReview ? 'Cập nhật đánh giá' : 'Đăng đánh giá'}
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {/* Reviews List */}
+        <div className="space-y-3">
+          {reviewsData?.reviews && reviewsData.reviews.length > 0 ? (
+            reviewsData.reviews.map((rev) => (
+              <div
+                key={rev._id}
+                className="rounded-2xl border border-border/60 bg-muted/20 p-4 sm:p-5 flex flex-col gap-2.5 transition hover:border-border"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-xs">
+                      {rev.userName?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-sm text-foreground">
+                        {rev.userName}
+                      </span>
+                      <span className="text-[11px] text-muted-foreground ml-2">
+                        {new Date(rev.createdAt).toLocaleDateString('vi-VN')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                      rev.isRecommended
+                        ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
+                        : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300'
+                    }`}
+                  >
+                    {rev.isRecommended ? (
+                      <>
+                        <ThumbsUp className="size-3" /> Khuyên dùng
+                      </>
+                    ) : (
+                      <>
+                        <ThumbsDown className="size-3" /> Chưa hợp vị
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                {rev.comment && (
+                  <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed pl-10">
+                    "{rev.comment}"
+                  </p>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="rounded-2xl border border-dashed border-border/80 p-8 text-center space-y-2">
+              <p className="text-sm font-medium text-foreground">Chưa có đánh giá nào cho món ăn này</p>
+              <p className="text-xs text-muted-foreground">
+                Hãy là người đầu tiên thử nấu và để lại cảm nhận cho mọi người cùng biết nhé!
+              </p>
+              {!showReviewForm && (
+                <Button
+                  onClick={() => setShowReviewForm(true)}
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full mt-2 text-xs font-semibold border-primary/40 text-primary hover:bg-primary/5 cursor-pointer"
+                >
+                  + Để lại đánh giá đầu tiên
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Bottom Action Footer */}
       <div className="flex flex-wrap items-center justify-between gap-4 pt-4">

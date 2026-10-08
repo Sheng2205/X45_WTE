@@ -95,6 +95,32 @@ export const matchApi = {
 
   getDish: (id: string) =>
     http.get<Dish>(`/dishes/${id}`),
+
+  getReviews: (dishId: string) =>
+    http.get<DishReviewsResponse>(`/reviews/${dishId}`),
+
+  submitReview: (dishId: string, data: { isRecommended: boolean; comment?: string }) =>
+    http.post<{ success: boolean; review: DishReview }>(`/reviews/${dishId}`, data),
 };
 
+export interface DishReview {
+  _id: string;
+  dishId: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  isRecommended: boolean;
+  comment?: string;
+  createdAt: string;
+}
+
+export interface DishReviewsResponse {
+  total: number;
+  recommendedCount: number;
+  percentage: number;
+  userReview: DishReview | null;
+  reviews: DishReview[];
+}
+
 export const dishService = matchApi;
+
