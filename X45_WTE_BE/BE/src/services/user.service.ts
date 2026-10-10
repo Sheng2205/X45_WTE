@@ -21,7 +21,11 @@ export const createUserWithOtp = async (email: string, password: string) => {
     existing.otpExpiresAt = otpExpiry();
     await existing.save();
 
-    await sendOtpEmail(email, otp);
+    if (process.env.NODE_ENV === 'test') {
+      await sendOtpEmail(email, otp);
+    } else {
+      sendOtpEmail(email, otp).catch((err) => console.error('[AUTH OTP ERROR]', err));
+    }
     return existing;
   }
 
@@ -33,7 +37,11 @@ export const createUserWithOtp = async (email: string, password: string) => {
     otpExpiresAt: otpExpiry()
   });
 
-  await sendOtpEmail(email, otp);
+  if (process.env.NODE_ENV === 'test') {
+    await sendOtpEmail(email, otp);
+  } else {
+    sendOtpEmail(email, otp).catch((err) => console.error('[AUTH OTP ERROR]', err));
+  }
   return user;
 };
 
@@ -46,7 +54,11 @@ export const issueOtpForUser = async (userId: string) => {
   user.otpExpiresAt = otpExpiry();
   await user.save();
 
-  await sendOtpEmail(user.email, otp);
+  if (process.env.NODE_ENV === 'test') {
+    await sendOtpEmail(user.email, otp);
+  } else {
+    sendOtpEmail(user.email, otp).catch((err) => console.error('[AUTH OTP ERROR]', err));
+  }
   return user;
 };
 
@@ -59,6 +71,10 @@ export const issueResetToken = async (email: string) => {
   user.resetTokenExpiresAt = resetExpiry();
   await user.save();
 
-  await sendResetTokenEmail(email, token);
+  if (process.env.NODE_ENV === 'test') {
+    await sendResetTokenEmail(email, token);
+  } else {
+    sendResetTokenEmail(email, token).catch((err) => console.error('[AUTH RESET ERROR]', err));
+  }
   return user;
 };

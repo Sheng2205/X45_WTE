@@ -37,6 +37,7 @@ app.get("/", (req, res) => {
 })
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
+app.get('/api/version', (_req, res) => res.json({ version: '1.0.2', deployed: true }));
 app.use('/api/auth', authRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/ingredients', ingredientRouter);
