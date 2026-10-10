@@ -10,7 +10,20 @@ const resetExpiry = () => new Date(Date.now() + env.resetTokenExpiresMinutes * 6
 
 export const createUserWithOtp = async (email: string, password: string) => {
   const existing = await UserModel.findOne({ email });
-  if (existing) return null;
+  if (existing) {
+    if (existing.isEmailVerified) return null;
+
+    // Account exists but was never verified:
+    // Update password, issue a fresh OTP, and allow the user to complete verification.
+    const otp = generateOtp();
+    existing.password = await hashPassword(password);
+    existing.otpCode = otp;
+    existing.otpExpiresAt = otpExpiry();
+    await existing.save();
+
+    await sendOtpEmail(email, otp);
+    return existing;
+  }
 
   const otp = generateOtp();
   const user = await UserModel.create({

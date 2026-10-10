@@ -44,6 +44,18 @@ describe('POST /api/auth/register', () => {
     expect(emailOutbox).toHaveLength(0);
   });
 
+  it('re-issues an OTP and returns 201 if the email exists but is not yet verified', async () => {
+    await createUser({ email: validPayload.email, isEmailVerified: false });
+
+    const response = await request(app).post('/api/auth/register').send(validPayload);
+
+    expect(response.status).toBe(201);
+    expect(response.body.message).toBe('OTP has been sent to your email');
+    expect(emailOutbox).toHaveLength(1);
+    const user = await UserModel.findOne({ email: validPayload.email });
+    expect(user?.isEmailVerified).toBe(false);
+  });
+
   it('rejects an invalid payload with 400 before touching the database', async () => {
     const response = await request(app)
       .post('/api/auth/register')
