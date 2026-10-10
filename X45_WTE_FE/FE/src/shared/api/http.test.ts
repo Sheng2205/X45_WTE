@@ -42,7 +42,7 @@ afterEach(() => {
 describe('http instance', () => {
   it('uses the configured API base URL and timeout', () => {
     expect(http.defaults.baseURL).toBe('http://test.local/api');
-    expect(http.defaults.timeout).toBe(15000);
+    expect(http.defaults.timeout).toBe(45000);
   });
 
   describe('resolveApiBaseUrl', () => {
