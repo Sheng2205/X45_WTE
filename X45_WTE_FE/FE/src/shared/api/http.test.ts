@@ -119,6 +119,24 @@ describe('response interceptor', () => {
     expect(location.href).toBe('');
   });
 
+  it('does not redirect to /logout when 401 occurs on /login page', async () => {
+    const location = stubWindowLocation('/login');
+    respondWith(401);
+
+    await expect(http.get('/auth/me')).rejects.toBeInstanceOf(AxiosError);
+
+    expect(location.href).toBe('');
+  });
+
+  it('does not redirect to /logout when 401 occurs on /auth/login endpoint', async () => {
+    const location = stubWindowLocation('/login');
+    respondWith(401);
+
+    await expect(http.post('/auth/login', { email: 'a@b.com', password: '123' })).rejects.toBeInstanceOf(AxiosError);
+
+    expect(location.href).toBe('');
+  });
+
   it.each([400, 403, 404, 409, 500])('keeps the token for status %i', async (status) => {
     const location = stubWindowLocation('/profile');
     tokenStore.set('jwt-value');

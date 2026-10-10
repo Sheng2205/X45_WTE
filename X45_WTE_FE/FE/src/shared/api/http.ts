@@ -42,9 +42,13 @@ http.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status as number | undefined;
+    const requestUrl = error?.config?.url as string | undefined;
+    const isAuthEndpoint = requestUrl?.includes('/auth/login') || requestUrl?.includes('/auth/register');
+    const isAuthPage = typeof window !== 'undefined' && ['/login', '/register', '/forgot-password', '/logout'].includes(window.location.pathname);
+
     if (status === 401) {
       tokenStore.clear();
-      if (window.location.pathname !== '/logout') {
+      if (!isAuthEndpoint && !isAuthPage) {
         window.location.href = '/logout';
       }
     }
