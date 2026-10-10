@@ -12,15 +12,21 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
-  await transporter.sendMail({ from: env.emailFrom, to, subject, html });
+  if (!env.smtpHost && process.env.NODE_ENV !== 'test') {
+    console.warn(`[SMTP NOTICE] SMTP_HOST is not configured. Email to "${to}" was skipped.`);
+    return;
+  }
+  await transporter.sendMail({ from: env.emailFrom || env.smtpUser, to, subject, html });
 };
 
 export const sendOtpEmail = async (to: string, otp: string) => {
   const expiresInMinutes = env.otpExpiresMinutes;
-  await sendEmail(
-    to,
-    'Mã xác thực OTP - WhatToEat',
-    `
+  console.log(`[AUTH OTP] Mã OTP đăng ký cho ${to}: ${otp} (hiệu lực ${expiresInMinutes} phút)`);
+  try {
+    await sendEmail(
+      to,
+      'Mã xác thực OTP - WhatToEat',
+      `
       <div style="margin:0;padding:0;background:#f4f4f5;font-family:Arial,sans-serif;">
         <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
           <div style="background:#ffffff;border:1px solid #e4e4e7;border-radius:14px;padding:24px;">
@@ -39,15 +45,23 @@ export const sendOtpEmail = async (to: string, otp: string) => {
           </div>
         </div>
       </div>
-    `
-  );
+      `
+    );
+  } catch (error: any) {
+    console.error(`[SMTP ERROR] Không thể gửi email OTP tới ${to}:`, error?.message || error);
+    if (process.env.NODE_ENV === 'test') {
+      throw error;
+    }
+  }
 };
 
 export const sendResetTokenEmail = async (to: string, token: string) => {
-  await sendEmail(
-    to,
-    'Mã OTP đặt lại mật khẩu - WhatToEat',
-    `
+  console.log(`[AUTH RESET] Mã đặt lại mật khẩu cho ${to}: ${token} (hiệu lực ${env.resetTokenExpiresMinutes} phút)`);
+  try {
+    await sendEmail(
+      to,
+      'Mã OTP đặt lại mật khẩu - WhatToEat',
+      `
       <div style="margin:0;padding:0;background:#f4f4f5;font-family:Arial,sans-serif;">
         <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
           <div style="background:#ffffff;border:1px solid #e4e4e7;border-radius:14px;padding:24px;">
@@ -66,6 +80,12 @@ export const sendResetTokenEmail = async (to: string, token: string) => {
           </div>
         </div>
       </div>
-    `
-  );
+      `
+    );
+  } catch (error: any) {
+    console.error(`[SMTP ERROR] Không thể gửi email đặt lại mật khẩu tới ${to}:`, error?.message || error);
+    if (process.env.NODE_ENV === 'test') {
+      throw error;
+    }
+  }
 };
