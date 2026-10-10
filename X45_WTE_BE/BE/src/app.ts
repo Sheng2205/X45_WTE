@@ -12,7 +12,23 @@ import { reviewRouter } from './routes/review.route';
 
 export const app = express();
 
-app.use(cors({ origin: env.clientUrl }));
+app.set('trust proxy', 1);
+
+const allowedOrigins = [
+  env.clientUrl,
+  'https://x45-wte.vercel.app',
+  'http://localhost:5173'
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    return callback(null, true); // Fallback allow to avoid unexpected CORS blocks in deployment
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
 

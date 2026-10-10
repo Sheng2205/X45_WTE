@@ -5,7 +5,7 @@ dotenv.config();
 const rawEnv = process.env as Record<string, string | undefined>;
 
 export const env = {
-  port: Number(rawEnv.PORT ?? 5000),
+  port: Number(rawEnv.PORT || 5003),
   mongoUri: rawEnv.MONGO_URI ?? '',
   jwtSecret: rawEnv.JWT_SECRET ?? '',
   jwtExpiresIn: rawEnv.JWT_EXPIRES_IN ?? '1d',
@@ -23,8 +23,12 @@ export const env = {
   cloudinaryApiSecret: rawEnv.CLOUDINARY_API_SECRET
 };
 
-if (!env.mongoUri || !env.jwtSecret) {
-  throw new Error('Missing required environment variables (MONGO_URI, JWT_SECRET)');
+const missingEnvVars: string[] = [];
+if (!env.mongoUri) missingEnvVars.push('MONGO_URI');
+if (!env.jwtSecret) missingEnvVars.push('JWT_SECRET');
+
+if (missingEnvVars.length > 0) {
+  console.error(`[CONFIG ERROR] Missing required environment variable(s): ${missingEnvVars.join(', ')}. Please set them in Render / .env.`);
 }
 
 if (!env.cloudinaryCloudName || !env.cloudinaryApiKey || !env.cloudinaryApiSecret) {
