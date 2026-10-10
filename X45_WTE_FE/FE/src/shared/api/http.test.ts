@@ -2,7 +2,7 @@ import { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { tokenStore } from '../../modules/auth/store/token.store';
 import { stubWindowLocation } from '../../test/stub-window-location';
-import { http } from './http';
+import { http, resolveApiBaseUrl } from './http';
 
 /**
  * Drives the real interceptors by swapping in a fake adapter, so no network
@@ -43,6 +43,29 @@ describe('http instance', () => {
   it('uses the configured API base URL and timeout', () => {
     expect(http.defaults.baseURL).toBe('http://test.local/api');
     expect(http.defaults.timeout).toBe(15000);
+  });
+
+  describe('resolveApiBaseUrl', () => {
+    it('defaults to Render production URL when in production mode without env var', () => {
+      expect(resolveApiBaseUrl('', true)).toBe('https://x45-wte-be.onrender.com/api');
+    });
+
+    it('defaults to localhost:5003 when in development mode without env var', () => {
+      expect(resolveApiBaseUrl('', false)).toBe('http://localhost:5003/api');
+    });
+
+    it('appends /api if missing from configured URL', () => {
+      expect(resolveApiBaseUrl('https://x45-wte-be.onrender.com', true)).toBe('https://x45-wte-be.onrender.com/api');
+    });
+
+    it('avoids double /api if already present', () => {
+      expect(resolveApiBaseUrl('https://x45-wte-be.onrender.com/api', true)).toBe('https://x45-wte-be.onrender.com/api');
+    });
+
+    it('trims trailing slashes before appending or preserving /api', () => {
+      expect(resolveApiBaseUrl('https://x45-wte-be.onrender.com/api/', true)).toBe('https://x45-wte-be.onrender.com/api');
+      expect(resolveApiBaseUrl('https://x45-wte-be.onrender.com/', true)).toBe('https://x45-wte-be.onrender.com/api');
+    });
   });
 });
 
