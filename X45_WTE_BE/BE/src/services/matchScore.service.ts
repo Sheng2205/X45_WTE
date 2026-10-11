@@ -4,6 +4,16 @@ import { DishDocument } from '../models/dish.model';
 const W1 = 0.7; // ingredient match weight
 const W2 = 0.3; // soft criteria match weight
 
+// ── Normalize helper: lowercase + strip Vietnamese diacritics ────────
+// e.g. "Trứng gà" → "trung ga", "Cà chua" → "ca chua"
+export const normalize = (str: string): string =>
+  str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // strip combining diacritical marks
+    .replace(/đ/gi, 'd')             // đ/Đ not decomposed by NFD
+    .trim();
+
 // ── Types ────────────────────────────────────────────────────────────
 export interface MatchInput {
   ingredients: string[];   // array of ingredientId strings the user has
@@ -44,6 +54,20 @@ export const excludeAllergenDishes = (
   });
 };
 
+// ── Partial-match helper: checks if any user token is a substring of
+// the dish ingredient name OR the dish ingredient name is a substring
+// of any user token (handles "Cà chua" ↔ "Cà chua chín mọng",
+// "Nấm hương" ↔ "Nấm hương (Nấm đông cô)", etc.)
+const partialMatch = (dishIngName: string, userSet: Set<string>): boolean => {
+  const normDish = normalize(dishIngName);
+  for (const userToken of userSet) {
+    if (normDish === userToken) return true;          // exact
+    if (normDish.includes(userToken)) return true;   // "Cà chua chín mọng" contains "ca chua"
+    if (userToken.includes(normDish)) return true;   // "ca chua" contains shorter dish name
+  }
+  return false;
+};
+
 // ── BR-2: Calculate Match Score for a single dish ────────────────────
 export const calculateMatchScore = (
   dish: DishDocument,
@@ -52,15 +76,17 @@ export const calculateMatchScore = (
   dietTags?: string[]
 ): ScoredDish => {
   const userIngredientSet = new Set(
-    userIngredientIds.map((item) => String(item).toLowerCase().trim())
+    userIngredientIds.map((item) => normalize(String(item)))
   );
 
   // Ingredient ratio
   const dishIngredients = dish.ingredients || [];
   const totalIngredients = dishIngredients.length;
   const matchedIngredients = dishIngredients.filter((ing) => {
-    const idMatch = ing.ingredientId && userIngredientSet.has(String(ing.ingredientId).toLowerCase());
-    const nameMatch = ing.name && userIngredientSet.has(ing.name.toLowerCase().trim());
+    // 1. Exact ObjectId match (when FE sends real _id)
+    const idMatch = ing.ingredientId && userIngredientSet.has(normalize(String(ing.ingredientId)));
+    // 2. Exact or partial name match (handles verbose DB names vs short user input)
+    const nameMatch = ing.name && partialMatch(ing.name, userIngredientSet);
     return Boolean(idMatch || nameMatch);
   }).length;
 
